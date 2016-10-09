@@ -1,0 +1,164 @@
+<?php
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use Input;
+use Validator;
+use Redirect;
+use Route;
+use Response;
+use Auth;
+use Laracasts\Flash\Flash;
+use View;
+use JavaScript;
+use Excel;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use App\Job;
+use App\User;
+use App\Admin;
+use App\Cost;
+use PHPExcel_IOFactory;
+
+// use PDF;
+use Image;
+use Filesystem;
+
+use Knp\Snappy\Pdf;
+
+class CostsController extends Controller
+{
+    public function __construct() {
+        $this->layout = 'layouts.admins';
+    }
+    
+	public function getIndex()
+	{
+		//TABLE BODY HTML
+		$ca = Cost::PrepareCostArray(Cost::pluck('company_name')->toArray());
+		$tbh = Cost::PrepareTBH($ca);
+		$chartdata = Cost::PrepareChartData($ca);
+		$enc = json_encode($chartdata);
+	    JavaScript::put([
+	        'enc' => $enc
+	    ]);
+	    $now_dt = time();
+	    $tok = Job::generateRandomNumber(6);
+
+
+	    $chartdata = Cost::PrepareExcelArray($ca);
+
+
+		// Excel::create('Excel-Report-'.$now_dt.'-'.$tok, function($excel)  use($now_dt,$tok,$chartdata,$tbh){
+		//     $excel->sheet('Sheet-'.$now_dt.'-'.$tok, function($sheet) use($chartdata,$tbh) {
+		// 		$sheet->loadView('costs.excel_gen')
+		// 			->with('tbh',$tbh);
+		//     });
+		// })->store('xlsx', 'assets/excels/generated_files');
+
+
+		// $ea = new \PHPExcel(); // ea is short for Excel Application
+		// $ea->getProperties()
+		//    ->setCreator('Taylor Ren')
+		//    ->setTitle('PHPExcel Demo')
+		//    ->setLastModifiedBy('Taylor Ren')
+		//    ->setDescription('A demo to show how to use PHPExcel to manipulate an Excel file')
+		//    ->setSubject('PHP Excel manipulation')
+		//    ->setKeywords('excel php office phpexcel lakers')
+		//    ->setCategory('programming')
+		//    ;
+		// $ews = $ea->getSheet(0);
+		// $ews->setTitle('Data');
+		// $writer = \PHPExcel_IOFactory::createWriter($ea, 'Excel2007');
+		// $writer->setIncludeCharts(true);
+		// $writer->save('assets/excels/generated_files/Excel-Report-'.$now_dt.'-'.$tok.'.xlsx');
+
+
+
+
+
+    // $fs = new Filesystem();
+
+    // $data = array('tbh'=>$tbh);
+
+    // $fs->put("assets/flhtml.xml", View::make('costs.img_pdf_gen', $data));
+
+		$mfile  =  view('costs.img_pdf_gen')
+					->with('tbh',$tbh)->render();
+
+		// Job::dump($mfile);
+
+		// // 			sleep(3);
+
+		// $pdf = PDF::loadHTML($mfile);
+		// return $pdf->download('invoice.pdf');
+		// $datap = array('tbh' =>$tbh);
+		// $pdf = PDF::loadView('costs.img_pdf_gen', $datap);
+		// return $pdf->download('invoice.pdf');
+
+		// .. or simply save the PDF to a file
+		$snappy = new Pdf('assets/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64');
+
+
+		$snappy->setOption('orientation', 'landscape');
+		$snappy->setOption('enable-javascript', true);
+		$snappy->setOption('javascript-delay', 9000);
+		$snappy->setOption('no-stop-slow-scripts', true);
+		$snappy->setOption('no-background', true);
+		$snappy->setOption('lowquality', false);
+		$snappy->setOption('encoding', 'UTF8');
+		$snappy->setOption('images', true);
+		$snappy->setOption('cookie', array());
+		$snappy->setOption('dpi', 300);
+		$snappy->setOption('image-dpi', 300);
+		$snappy->setOption('enable-external-links', true);
+		$snappy->setOption('enable-internal-links', true);
+
+
+		// .. or pass a cover as html
+		$td = time();
+		// $snappy->generateFromHtml($mfile, 'assets/bill-123'.$td.'.pdf');
+		$snappy->generate('http://www.naver.com/', 'assets/bill-123'.$td.'.pdf');
+
+		// return view('costs.img_pdf_gen')
+		// 	->with('tbh',$tbh);
+	}
+
+	public function getAdd()
+	{
+		// $tax_status = Tax::taxStatus();
+		// return view('taxes.add')
+		// 	->with('layout',$this->layout)
+		// 	->with('tax_status',$tax_status);
+	}
+	public function postAdd()
+	{
+		
+	}
+
+	public function getEdit($id = null)
+	{
+		// return view('taxes.edit')
+		// 	->with('layout',$this->layout);
+	}
+	public function postEdit()
+	{
+		
+	}
+
+	public function postDelete()
+	{
+		// $tax_id = Input::get('tax_id');
+		// $tax = Tax::find($tax_id);
+		// if($tax->delete()) {
+		// 	return Redirect::action('TaxesController@getIndex')
+		// 	->with('message', 'Successfully deleted!')
+		// 	->with('alert_type','alert-success');
+		// } else {
+		// 	return Redirect::back()
+		// 	->with('message', 'Oops, somthing went wrong. Please try again.')
+		// 	->with('alert_type','alert-danger');	
+		// }
+	}
+}
