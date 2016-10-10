@@ -163,15 +163,18 @@ class Job extends Model
 	}
 	static public function ViewShareAdminPrivateData() {
 		$array = [];
-		$this_username = null;
-        $this_user_profile_image = null;
+		$t_un = null;
+        $t_ui = null;
+        $t_ucount = null;
         if (Auth::check()) {
             $this_user = User::find(Auth::user()->id);
-            $this_username = $this_user->username;
-            $this_user_profile_image = Job::imageValidator($this_user->profile_image);
+            $t_un = $this_user->username;
+            $t_ui = Job::imageValidator($this_user->profile_image);
+            $t_ucount = count(User::all());
         } 
-        View::share('this_username',$this_username);
-        View::share('this_user_profile_image',$this_user_profile_image);
+        View::share('t_un',$t_un);
+        View::share('t_ui',$t_ui);
+        View::share('t_ucount',$t_ucount);
 		return $array;
 	}
 
@@ -723,10 +726,10 @@ public static function country_code(){
 		if (isset($image_path)) {
 			$full_path = public_path("/assets/images/profile-images/perm/".$image_path);
 			if (file_exists($full_path)) {
-				return $image_path;
+				return $full_path;
 			}
 		}
-		return "blank_male.png";
+		return "/assets/images/profile-images/perm/blank_male.png";
 	}
 
 	static public function humanTiming ($time)

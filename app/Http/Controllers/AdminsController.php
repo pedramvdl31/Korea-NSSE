@@ -54,7 +54,7 @@ class AdminsController extends Controller
             Flash::success('Welcome back '.$username.'!');
             // return redirect()->action('AdminsController@getIndex');
             // Check for intended redirect, if not exists then go to default /admins page
-            return (Session::has('redirect_flash')) ? Redirect::to(Session::get('redirect_flash')) : redirect()->intended('/admins');
+            return (redirect()->intended('/admins'));
         } else { //LOGING FAILED
             Flash::error('Wrong Username or Password!');
             $this->layout = 'layouts.master-layout';
