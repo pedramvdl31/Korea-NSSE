@@ -12,7 +12,7 @@
     <meta name="description" content="">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="shortcut icon" href="/assets/img/yongs_red.svg" type="image/icon">
-    <title>Fantaplan</title>
+    <title>K-NSSE</title>
     {!! Html::style('http://fonts.googleapis.com/css?family=Lobster|Oswald:400,300,700') !!}
     <!-- Bootstrap -->
 

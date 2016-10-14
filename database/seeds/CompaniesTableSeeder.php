@@ -13,8 +13,8 @@ class CompaniesTableSeeder extends Seeder
     {
 		DB::table('companies')->insert([
 		        'id' => '1',
-		        'name' => 'fantaplan',
-		        'email' => 'webmaster@fantaplan.com',
+		        'name' => 'knsse',
+		        'email' => 'pedramkhoshnevis@gmail.com',
 		        'street' => '-',
 		        'city' => 'Seoul',
                 'status' => '1',

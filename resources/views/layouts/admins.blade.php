@@ -47,7 +47,7 @@
 
   <header class="main-header">
     <!-- Logo -->
-    <a href="index2.html" class="logo">
+    <a href="/admins" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>K</b>NSSE</span>
       <!-- logo for regular state and mobile devices -->
@@ -124,7 +124,7 @@
       <ul class="sidebar-menu">
         <li class="header">MAIN NAVIGATION</li>
         <li>
-          <a href="pages/widgets.html">
+          <a href="#">
             <i class="fa fa-th"></i> <span>K-NSSE</span>
             <span class="pull-right-container">
               <small class="label pull-right bg-green">new</small>
