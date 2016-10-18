@@ -72,9 +72,20 @@ class AdminsController extends Controller
     }
     public function getViewAcl() {   
         return view('admins.acl_view')
-        ->with('layout',$this->layout);
-               
+        ->with('layout',$this->layout);         
     }
+
+    public function getKNSSEIndex() {   
+        return view('admins.knsse_upload')
+        ->with('layout',$this->layout);
+    }
+
+    public function postKNSSEFileUpload() {
+        return Response::json(array(
+            'status' => 200
+        ));
+    }
+
 
     // public function getUsersEdit($id = null) {
     //     $users = User::find($id);

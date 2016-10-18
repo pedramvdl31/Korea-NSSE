@@ -60,6 +60,9 @@ Route::group(['middleware' => ['web','beforeFilter']], function () {
 		Route::group(['prefix' => 'admins','middleware' => 'admins_acl'], function () {
 			Route::get('',  ['as'=>'admins_index', 'uses' => 'AdminsController@getIndex']);
 
+			//K-NSSE
+			Route::get('k-nsse-upload',  ['as' => 'k_upload','uses' => 'AdminsController@getKNSSEIndex']);
+			Route::post('knsse-file-upload',  ['uses' => 'AdminsController@postKNSSEFileUpload']);
 			//COMPANIES
 			Route::get('companies',  ['as' => 'companies_index','uses' => 'CompaniesController@getIndex']);
 			Route::get('companies/add',  ['as' => 'companies_add','uses' => 'CompaniesController@getAdd']);
