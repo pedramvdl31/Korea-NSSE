@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Model;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use DirectoryIterator;
+use File;
+use Response;
+
 class Job extends Model
 {
 	
@@ -63,6 +66,44 @@ class Job extends Model
 	static public function ReturnRandDateNTok(){
 		$output=['now_dt'=>date("d_m_Y"),'tok'=>Job::generateRandomNumber(6)];
 		return $output;
+	}
+	static public function TmpFileSave($_file,$FPath,$perm){
+
+		$output=[];
+
+		$output['status']=400;
+
+        //tmp data
+        $Fname = $_file[0]['name'];
+        $Ftmp = $_file[0]['tmp_name'];
+
+        //file details
+        $ext = File::extension($_file[0]['name']);
+        $name = File::name($_file[0]['name']);
+
+        $now_time = time();
+        $new_name = $name.'-'.$now_time;
+        $name_ext =  $new_name.'.'.$ext;
+
+        // check if $folder is a directory
+        if( ! \File::isDirectory($FPath) ) {
+            \File::makeDirectory($FPath, $perm, true);
+        }
+        if (!is_writable(dirname($FPath))) {
+            $output['status'] = 401;
+            return $output;
+        } else {
+            $final_path = preg_replace('#[ -]+#', '-', $new_name);
+            if (move_uploaded_file($Ftmp, $FPath.$name_ext)) {
+                $output['status'] = 200;
+                $output['fname']=$new_name;
+                $output['ftype']=$ext;
+                $output['ffpath']=$FPath.$new_name.'.'.$ext;
+                return $output;
+            }
+        }
+
+
 	}
 
 	//ZIP ALL THE FILES WHTHIN FOLDER AND ADD INTO NEW FOLDER /* -> /FOLDER.ZIP

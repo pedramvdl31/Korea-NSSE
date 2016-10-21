@@ -9,7 +9,7 @@
 
 @section('content')
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header" style="padding: 15px 15px 15px 15px;">
       <h1>
         K-NSSE Upload
         <small>Control panel</small>
@@ -22,7 +22,7 @@
 
 
     
-    <div class="panel panel-default" style="margin: 15px">
+    <div class="panel panel-default" style="margin: 0px 15px 0 15px;">
       <div class="panel-body">
         
         <!-- UPLOAD DIV -->

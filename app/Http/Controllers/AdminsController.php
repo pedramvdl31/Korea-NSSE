@@ -17,7 +17,6 @@ use Session;
 use Laracasts\Flash\Flash;
 use View;
 use JavaScript;
-use Excel;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Job;
@@ -27,6 +26,10 @@ use App\Role;
 use App\RoleUser;
 use App\Permission;
 use App\PermissionRole;
+
+use Excel;
+use PHPExcel_IOFactory;
+use File;
 
 class AdminsController extends Controller
 {
@@ -80,10 +83,37 @@ class AdminsController extends Controller
         ->with('layout',$this->layout);
     }
 
+    //AJAX FILE UPLOAD
     public function postKNSSEFileUpload() {
-        return Response::json(array(
-            'status' => 200
-        ));
+
+
+        $saved_file = Job::TmpFileSave($_FILES,public_path("assets/excel/tmp/"),'777');
+
+        if ($saved_file['status']==200) {
+            
+            $full_path = $saved_file['ffpath'];
+
+
+            Excel::load($full_path, function($reader) {
+
+                // Getting all results
+                $results = $reader->get();
+
+                // ->all() is a wrapper for ->get() and will work the same
+                $results = $reader->all();
+
+
+
+            });
+            
+
+        } else {
+            return Response::json(array(
+                'status' => $saved_file['status']
+            ));
+        }
+
+
     }
 
 
