@@ -38,7 +38,12 @@
                   <span class="sr-only">Loading...</span>
                 </div>
               </div>
+              </br>
             </div>
+        </div>
+        <div id="pbarv" class="progress hide" style="width: 100%">
+          <div id="pbari" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0;">
+          </div>
         </div>
 
         <hr>

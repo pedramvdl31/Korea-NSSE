@@ -89,24 +89,26 @@ class AdminsController extends Controller
 
         $saved_file = Job::TmpFileSave($_FILES,public_path("assets/excel/tmp/"),'777');
 
+        Job::dump('**************SAVED****************');
+
         if ($saved_file['status']==200) {
             
             $full_path = $saved_file['ffpath'];
-
-
             Excel::load($full_path, function($reader) {
-
                 // Getting all results
                 $results = $reader->get();
-
+                Job::dump($results);
                 // ->all() is a wrapper for ->get() and will work the same
                 $results = $reader->all();
-
-
-
             });
-            
 
+
+            Job::dump('**************DONE PRINTING****************');
+
+
+            return Response::json(array(
+                'status' => 200
+            ));
         } else {
             return Response::json(array(
                 'status' => $saved_file['status']

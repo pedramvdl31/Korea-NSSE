@@ -32,20 +32,12 @@ knsseup = {
 				        var xhr = new window.XMLHttpRequest();
 				        xhr.upload.addEventListener("progress", function(evt) {
 				            if (evt.lengthComputable) {
-				                var percentComplete = evt.loaded / evt.total;
-				                console.log(percentComplete);
+				            	$('#pbarv').removeClass('hide');
+				                var percentComplete = (evt.loaded / evt.total) * 100;
+				                $('#pbari').attr('aria-valuenow',percentComplete).css('width',percentComplete+'%').text(percentComplete.toFixed(2)+'%');
 				                //Do something with upload progress here
 				            }
 				       }, false);
-
-				       xhr.addEventListener("progress", function(evt) {
-				           if (evt.lengthComputable) {
-				               var percentComplete = evt.loaded / evt.total;
-				               console.log(percentComplete);
-				               //Do something with download progress
-				           }
-				       }, false);
-
 				       return xhr;
 				    },
 			        url: '/admins/knsse-file-upload',

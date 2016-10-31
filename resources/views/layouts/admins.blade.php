@@ -213,7 +213,7 @@
 @yield('scripts')
 <!-- Morris.js charts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-<script src="/assets/plugins/morris/morris.min.js"></script>
+<!-- <script src="/assets/plugins/morris/morris.min.js"></script> -->
 <!-- Sparkline -->
 <script src="/assets/plugins/sparkline/jquery.sparkline.min.js"></script>
 <!-- jvectormap -->
