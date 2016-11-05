@@ -4,6 +4,10 @@
   {!! Html::style('/assets/css/general.css') !!}
 @stop
 @section('scripts')
+  <!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> -->
+  <script type="text/javascript" src="/packages/fusioncharts/js/fusioncharts.js"></script>
+  <script type="text/javascript" src="/packages/fusioncharts/js/themes/fusioncharts.theme.fint.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.debug.js"></script>
   <script src="/assets/js/admins/knsse_upload.js"></script>
 @stop
 
@@ -38,7 +42,7 @@
                   <span class="sr-only">Loading...</span>
                 </div>
               </div>
-              </br>
+              <br>
             </div>
         </div>
         <div id="pbarv" class="progress hide" style="width: 100%">
@@ -54,6 +58,8 @@
       </div>
     </div>
 
-
+    <button id="topdfbtn">To PDF</button>
+    
+    <div id="chart-container">FusionCharts will render here</div>
 
 @stop

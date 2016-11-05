@@ -26,10 +26,14 @@ use App\Role;
 use App\RoleUser;
 use App\Permission;
 use App\PermissionRole;
-
+use App;
 use Excel;
 use PHPExcel_IOFactory;
 use File;
+
+
+use PDF;
+
 
 class AdminsController extends Controller
 {
@@ -78,9 +82,42 @@ class AdminsController extends Controller
         ->with('layout',$this->layout);         
     }
 
+    public function getKnsseCharts() { 
+        return view('knsse.pdf_gen');
+    }
     public function getKNSSEIndex() {   
+
+        // $headers = array(
+        //     "Content-type"=>"text/html",
+        //     "Content-Disposition"=>"attachment;Filename=myfile.doc"
+        // );
+
+
+
+
+
+
+        // $view = View::make('knsse.pdf_gen');
+        // $contents = (string) $view;
+        // // or
+        // $contents = $view->render();
+
+        // // return PDF::loadFile($contents)->inline('github.pdf');
+        // $pdf = App::make('snappy.pdf.wrapper');
+        // $pdf->loadHTML($contents);
+        // return $pdf->inline();
+
+
         return view('admins.knsse_upload')
         ->with('layout',$this->layout);
+
+        // $now_dt = time();
+        // $tok = Job::generateRandomNumber(6);
+        // $pdf = PDF::loadView('knsse.pdf_gen');
+        // return $pdf->download('PDF-Report-'.$now_dt.'-'.$tok.'.pdf');
+        //     return view('knsse.pdf_gen');
+
+
     }
 
     //AJAX FILE UPLOAD
@@ -118,43 +155,6 @@ class AdminsController extends Controller
 
     }
 
-
-    // public function getUsersEdit($id = null) {
-    //     $users = User::find($id);
-    //     $roles = Role::PerpareAdminRoleSelect();
-    //     $user_role_id = RoleUser::GetUserRoleId($users->id);
-    //     return view('admins.users_setting.edit')
-    //      ->with('layout',$this->layout)
-    //      ->with('roles',$roles)
-    //      ->with('users',$users)
-    //      ->with('user_role_id',$user_role_id); 
-    // }
-    
-    // public function postUsersEdit() {
-
-    //     $username = Input::get('username');
-    //     $fname = Input::get('fname');
-    //     $lname = Input::get('lname');
-    //     $email = Input::get('email');
-    //     $role_id = Input::get('role_id');
-    //     $id = Input::get('id');
-
-    //     $users = User::find($id);
-    //     $users->username = $username;
-    //     $users->firstname = $fname;
-    //     $users->lastname = $lname;
-    //     $users->email = $email;
-
-    //     $role_users = RoleUser::where('user_id',$id)->first();
-    //     $role_users->role_id = $role_id;
-
-    //     if ($users->save() && $role_users->save()) {
-    //         Flash::success('Successfully Updated');
-    //     } else {
-    //         Flash::Error('Error');
-    //     }
-    //     return Redirect::back();
-    // }
 
     
 }

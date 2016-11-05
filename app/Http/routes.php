@@ -15,6 +15,10 @@ Route::group(['prefix' => 'api/v1', 'middleware' => 'auth:api'], function () {
 	Route::get('users-all', ['uses' => 'UsersController@getAPIUsersAll']);
 	});
 
+
+
+Route::get('/charts',['uses' => 'AdminsController@getKnsseCharts']);
+
 //THE WEB MIDDLEWARE IS ADDED BY L5.2
 Route::group(['middleware' => ['web','beforeFilter']], function () {
 	Route::get('resources/qrcode',  ['as' => 'qr_index','uses' => 'ResourcesController@getQrIndex']);

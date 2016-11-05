@@ -10,7 +10,7 @@ return array(
         'options' =>    array(
                 'orientation' => 'landscape', 
                 'enable-javascript' => true, 
-                'javascript-delay' => 1000, 
+                'javascript-delay' => 2000, 
                 'no-stop-slow-scripts' => true, 
                 'no-background' => false, 
                 'lowquality' => false,
@@ -29,7 +29,7 @@ return array(
         'binary'  => 'assets/h4cc/wkhtmltoimage-amd64/bin/wkhtmltoimage-amd64',
         'timeout' => false,
         'options' => array(
-            'javascript-delay' => 1000,
+            'javascript-delay' => 10000,
             'encoding'=>'true'
             ),
         'env'     => array(),
