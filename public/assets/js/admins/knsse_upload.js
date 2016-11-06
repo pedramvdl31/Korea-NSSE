@@ -11,34 +11,6 @@ knsseup = {
 		});
 	},
 	events: function() {
-		
-		var doc = new jsPDF();
-		var specialElementHandlers = {
-		    '#editor': function (element, renderer) {
-		        return true;
-		    }
-		};
-		$("#topdfbtn").click(function(){
-		    doc.fromHTML($('#test').html(), 15, 15, {
-		        'width': 170,
-		            'elementHandlers': specialElementHandlers
-		    });
-		    doc.save('sample-file.pdf');
-		});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	},
 	file_upload: function(){

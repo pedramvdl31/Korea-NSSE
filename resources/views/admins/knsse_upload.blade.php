@@ -8,6 +8,7 @@
   <script type="text/javascript" src="/packages/fusioncharts/js/fusioncharts.js"></script>
   <script type="text/javascript" src="/packages/fusioncharts/js/themes/fusioncharts.theme.fint.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.debug.js"></script>
+  <script src="http://files.codepedia.info/uploads/iScripts/html2canvas.js"></script>
   <script src="/assets/js/admins/knsse_upload.js"></script>
 @stop
 
@@ -26,7 +27,7 @@
 
 
     
-    <div class="panel panel-default" style="margin: 0px 15px 0 15px;">
+    <div id="html-content-holder" class="panel panel-default" style="margin: 0px 15px 0 15px;">
       <div class="panel-body">
         
         <!-- UPLOAD DIV -->
@@ -54,12 +55,16 @@
 
         <!-- RESULTS DIV -->
 
-
+         <div id="chart-container">FusionCharts will render here</div>
       </div>
     </div>
 
-    <button id="topdfbtn">To PDF</button>
-    
-    <div id="chart-container">FusionCharts will render here</div>
+    <input id="btn-Preview-Image" type="button" value="Preview"/>
+    <a id="btn-Convert-Html2Image" href="#">Download</a>
+    <br/>
+    <h3>Preview :</h3>
+    <div id="previewImage">
+    </div>
+   
 
 @stop

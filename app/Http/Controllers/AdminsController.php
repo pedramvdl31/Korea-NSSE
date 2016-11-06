@@ -84,13 +84,17 @@ class AdminsController extends Controller
 
     public function getKnsseCharts() { 
         return view('knsse.pdf_gen');
+        // $now_dt = time();
+        // $tok = Job::generateRandomNumber(6);
+        // $pdf = PDF::loadView('knsse.pdf_gen');
+        // return $pdf->download('PDF-Report-'.$now_dt.'-'.$tok.'.pdf');
+        //     return view('knsse.pdf_gen');
     }
     public function getKNSSEIndex() {   
 
-        // $headers = array(
-        //     "Content-type"=>"text/html",
-        //     "Content-Disposition"=>"attachment;Filename=myfile.doc"
-        // );
+        $headers = array(
+            "Content-type"=>"text/html;charset=UTF-8",
+        );
 
 
 
@@ -102,14 +106,11 @@ class AdminsController extends Controller
         // // or
         // $contents = $view->render();
 
-        // // return PDF::loadFile($contents)->inline('github.pdf');
-        // $pdf = App::make('snappy.pdf.wrapper');
-        // $pdf->loadHTML($contents);
-        // return $pdf->inline();
+        return PDF::loadFile(public_path().'/assets/output.html')->inline('github.pdf');
 
 
-        return view('admins.knsse_upload')
-        ->with('layout',$this->layout);
+        // return view('admins.knsse_upload')
+        // ->with('layout',$this->layout);
 
         // $now_dt = time();
         // $tok = Job::generateRandomNumber(6);
