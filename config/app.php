@@ -166,8 +166,10 @@ return [
         Maatwebsite\Excel\ExcelServiceProvider::class,
         //PDF
         Barryvdh\Snappy\ServiceProvider::class,
+        //IMAGE
         //ZIP
-        Chumper\Zipper\ZipperServiceProvider::class
+        Chumper\Zipper\ZipperServiceProvider::class,
+        RobbieP\CloudConvertLaravel\CloudConvertLaravelServiceProvider::class
 
     ],
 
@@ -222,8 +224,8 @@ return [
         'Excel' => 'Maatwebsite\Excel\Facades\Excel',
         'PDF' => Barryvdh\Snappy\Facades\SnappyPdf::class,
         'Image' => Barryvdh\Snappy\Facades\SnappyImage::class,
-        'Zipper' => Chumper\Zipper\ZipperServiceProvider::class
-
+        'Zipper' => Chumper\Zipper\ZipperServiceProvider::class,
+        'CloudConvert' => RobbieP\CloudConvertLaravel\CloudConvertLaravelServiceProvider::class
     ],
 
 ];

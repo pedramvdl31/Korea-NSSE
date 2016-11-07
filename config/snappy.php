@@ -10,7 +10,7 @@ return array(
         'options' =>    array(
                 'orientation' => 'landscape', 
                 'enable-javascript' => true, 
-                'javascript-delay' => 700, 
+                'javascript-delay' => 1000, 
                 'no-stop-slow-scripts' => true, 
                 'no-background' => false, 
                 'lowquality' => false,
@@ -28,9 +28,13 @@ return array(
         'enabled' => true,
         'binary'  => 'assets/h4cc/wkhtmltoimage-amd64/bin/wkhtmltoimage-amd64',
         'timeout' => false,
-        'options' => array(
-            'javascript-delay' => 300,
-            'encoding'=>'true'
+        'options' =>    array(
+                'enable-javascript' => true, 
+                'javascript-delay' => 1000, 
+                'no-stop-slow-scripts' => true, 
+                'encoding' => 'utf-8',
+                'images' => true,
+                'cookie' => array()
             ),
         'env'     => array(),
     ),

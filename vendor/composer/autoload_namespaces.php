@@ -6,11 +6,12 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'phpDocumentor' => array($vendorDir . '/phpdocumentor/reflection-docblock/src'),
     'libphonenumber' => array($vendorDir . '/giggsey/libphonenumber-for-php/src'),
-    'Psr\\Log\\' => array($vendorDir . '/psr/log'),
+    'RobbieP\\CloudConvertLaravel\\' => array($vendorDir . '/robbiep/cloudconvert-laravel/src'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
+    'Patchwork' => array($vendorDir . '/patchwork/utf8/class'),
     'PHPExcel' => array($vendorDir . '/phpoffice/phpexcel/Classes', $vendorDir . '/phpexcel/phpexcel/Classes'),
+    'Normalizer' => array($vendorDir . '/patchwork/utf8/class'),
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),
     'Maatwebsite\\Excel\\' => array($vendorDir . '/maatwebsite/excel/src'),
     'Laracasts\\Flash' => array($vendorDir . '/laracasts/flash/src'),

@@ -31,8 +31,10 @@ use Excel;
 use PHPExcel_IOFactory;
 use File;
 
-
 use PDF;
+use CloudConvert;
+use Filesystem;
+use Image;
 
 
 class AdminsController extends Controller
@@ -83,42 +85,110 @@ class AdminsController extends Controller
     }
 
     public function getKnsseCharts() { 
-        return view('knsse.pdf_gen');
+
+        $charts_data = array( 0 => array( 'label' =>'브드드람',
+                                    'values'=> array(
+                                                'Q1' =>120,
+                                                'Q2' =>150,
+                                                'Q3' =>200,
+                                                'whisker_low' =>115,
+                                                'whisker_high' =>210
+                                                ),
+                     ));
+
+
+        // JavaScript::put([
+        //     'chartsdata' => json_encode($charts_data)
+        // ]);
+
+
+
+
         // $now_dt = time();
         // $tok = Job::generateRandomNumber(6);
-        // $pdf = PDF::loadView('knsse.pdf_gen');
-        // return $pdf->download('PDF-Report-'.$now_dt.'-'.$tok.'.pdf');
-        //     return view('knsse.pdf_gen');
-    }
-    public function getKNSSEIndex() {   
-
-        $headers = array(
-            "Content-type"=>"text/html;charset=UTF-8",
-        );
+        // $pdf = Image::file('knsse.output');
+        // return $pdf->download('PDF-Report-'.$now_dt.'-'.$tok.'.jpg');
 
 
-
-
-
-
-        // $view = View::make('knsse.pdf_gen');
+        // $view = view('knsse.output');
         // $contents = (string) $view;
-        // // or
-        // $contents = $view->render();
-
-        return PDF::loadFile(public_path().'/assets/output.html')->inline('github.pdf');
+        // file_put_contents(public_path().'/assets/exercise.html', $contents);
 
 
-        // return view('admins.knsse_upload')
-        // ->with('layout',$this->layout);
+        // CloudConvert::file(public_path().'/assets/exercise.html')->withOptions([
+        //          'javascript_delay' => 5000
+        //     ])->to('doc');
+
+
+         // CloudConvert::website('http://k-nsse.webprinciples.com/charts')->withOptions([
+         //         'javascript_delay' => 5000
+         //    ])->to(public_path().'/assets/nyan.pdf');
+        
+        // CloudConvert::file(public_path().'/assets/myqr.png')->quality(70)->to('jpg');
+        // CloudConvert::website('www.nyan.cat')->to('/assets/nyan.jpg');
+
+
+        //WORKINGGG
+        // $data = array('data' =>json_encode($charts_data));
+        // $now_dt = time();
+        // $tok = Job::generateRandomNumber(6);
+        // $img = Image::loadView('knsse.output',$data)->save(public_path().'/assets/test.jpg');
+        //WORKING END
+
+
+        // $headers = array(
+        //     "Content-type"=>"text/html",
+        //     "Content-Disposition"=>"attachment;Filename=myfile.doc"
+        // );
+
+        // $p = public_path().'/assets/test.jpg';
+        // $content = '<html>
+        //             <head>
+        //             <meta charset="utf-8">
+        //             </head>
+        //             <body>
+        //                  <img src="'.$p.'" width="400px">
+        //             </body>
+        //             </html>';
+
+        // return Response::make($content,200, $headers);
+       
+
+        $data = json_encode($charts_data);
+        return view('knsse.output')
+            ->with('data',$data)
+            ->with('layout',$this->layout);
 
         // $now_dt = time();
         // $tok = Job::generateRandomNumber(6);
-        // $pdf = PDF::loadView('knsse.pdf_gen');
+        // $pdf = PDF::loadView('knsse.output');
         // return $pdf->download('PDF-Report-'.$now_dt.'-'.$tok.'.pdf');
-        //     return view('knsse.pdf_gen');
+    }
+    //convert page
+    public function postConvertToDocx() {
+
+        // file_put_contents(public_path().'/assets/exercise.html', Input::get('hdata'));
+        
+
+        // $now_dt = time();
+        // $tok = Job::generateRandomNumber(6);
+        // $pdf = Image::loadView('knsse.output');
+        // return $pdf->download('PDF-Report-'.$now_dt.'-'.$tok.'.png');
+            
+        // working    
+        // CloudConvert::file(public_path().'/assets/exercise.html')->quality(100)->to('jpg');
 
 
+
+
+
+    }
+
+
+
+    public function getKNSSEIndex() {   
+        return view('admins.knsse_upload')
+        ->with('layout',$this->layout);
     }
 
     //AJAX FILE UPLOAD

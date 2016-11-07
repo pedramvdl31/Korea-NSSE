@@ -18,6 +18,9 @@ Route::group(['prefix' => 'api/v1', 'middleware' => 'auth:api'], function () {
 
 
 Route::get('/charts',['uses' => 'AdminsController@getKnsseCharts']);
+Route::post('/make-doc',  ['uses' => 'AdminsController@postConvertToDocx']);
+
+
 
 //THE WEB MIDDLEWARE IS ADDED BY L5.2
 Route::group(['middleware' => ['web','beforeFilter']], function () {

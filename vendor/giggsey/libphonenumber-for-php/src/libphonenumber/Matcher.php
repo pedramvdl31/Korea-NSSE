@@ -48,7 +48,7 @@ class Matcher
                 break;
             case 'find':
             default:
-                // no changes	    
+                // no changes
                 break;
         }
         $final_pattern = '/' . $final_pattern . '/x';
@@ -97,7 +97,7 @@ class Matcher
      */
     public function group($group = null)
     {
-        if (!isset($group)) {
+        if (!isset($group) || $group === null) {
             $group = 0;
         }
         return (isset($this->groups[$group][0])) ? $this->groups[$group][0] : null;

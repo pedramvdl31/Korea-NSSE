@@ -20,7 +20,8 @@
         "knplabs/knp-snappy": "^0.4.3",
         "h4cc/wkhtmltoimage-amd64": "0.12.x",
         "chumper/zipper": "0.6.x",
-        "maveius/word": "~1.0.0"
+        "robbiep/cloudconvert-laravel": "2.*",
+        "phpoffice/phpword": "v0.13.*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
