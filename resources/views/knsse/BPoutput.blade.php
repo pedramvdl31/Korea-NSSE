@@ -1,25 +1,23 @@
 <!DOCTYPE html>
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-
-    <script src="/assets/plugins/jQuery/jquery-2.2.3.min.js" charset="utf-8"></script>
+<!--     <script src="/assets/plugins/jQuery/jquery-2.2.3.min.js" charset="utf-8"></script>
     <link href="/assets/js/d3/nv.d3.css" rel="stylesheet" type="text/css">
     <script src="/assets/js/d3/d3.min.js" charset="utf-8"></script>
     <script src="/assets/js/d3/nv.d3.js"></script>
+    <script src="/assets/js/d3/RadarChart.js"></script>
 
 
-    <script src="/assets/js/knsse/output.js"></script>
+    <script src="/assets/js/knsse/BPoutput.js"></script> -->
     
-<!--     <script src="{!!public_path()!!}/assets/plugins/jQuery/jquery-2.2.3.min.js" charset="utf-8"></script>
+    <script src="{!!public_path()!!}/assets/plugins/jQuery/jquery-2.2.3.min.js" charset="utf-8"></script>
     <link href="{!!public_path()!!}/assets/js/d3/nv.d3.css" rel="stylesheet" type="text/css">
     <script src="{!!public_path()!!}/assets/js/d3/d3.min.js" charset="utf-8"></script>
     <script src="{!!public_path()!!}/assets/js/d3/nv.d3.js"></script>
 
 
-    <script src="{!!public_path()!!}/assets/js/knsse/output.js"></script> -->
+    <script src="{!!public_path()!!}/assets/js/knsse/BPoutput.js"></script>
 
 
   <script type="text/javascript">
@@ -30,8 +28,8 @@
   </head>
 
   <body>
- 
-   <div id="wrap1" style="width:950px !important;height: 1000px">
+ <!-- width:950px !important; -->
+   <div id="wrap1" style="width:100%;height: 1000px;float: left">
        <style>
           .nv-boxplot-box{
               fill: none !important;
@@ -60,9 +58,6 @@
       <svg></svg>
     </div>
    </div>
-
-
-
 
   </body>
 

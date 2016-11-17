@@ -52,6 +52,14 @@ class Job extends Model
 		return (isset($d))?stripcslashes(str_replace(' ','_',$d)):null;
 	}
 
+	static public function DelEveryFile($p){
+        $files = glob($p); // get all file names
+        foreach($files as $file){ // iterate files
+          if(is_file($file))
+            unlink($file); // delete file
+        }
+	}
+
 	static public function GetFileInfo($df){
 		$o_ar=['exten'=>'','or_name'=>''];
 		if (isset($df)) {

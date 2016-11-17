@@ -26,6 +26,7 @@ use App\Role;
 use App\RoleUser;
 use App\Permission;
 use App\PermissionRole;
+use App\Knsse;
 use App;
 use Excel;
 use PHPExcel_IOFactory;
@@ -35,6 +36,8 @@ use PDF;
 use CloudConvert;
 use Filesystem;
 use Image;
+
+use Illuminate\Support\Facades\Storage;
 
 
 class AdminsController extends Controller
@@ -86,76 +89,38 @@ class AdminsController extends Controller
 
     public function getKnsseCharts() { 
 
+
+
+        // DELETE EVERY FILE IN FOLDER
+        Job::DelEveryFile(public_path().'/assets/output/images/*');
+
+
+        //DATA FOR BOX PLOT CHART
         $charts_data = array( 0 => array( 'label' =>'브드드람',
-                                    'values'=> array(
-                                                'Q1' =>120,
-                                                'Q2' =>150,
-                                                'Q3' =>200,
-                                                'whisker_low' =>115,
-                                                'whisker_high' =>210
-                                                ),
-                     ));
+                            'values'=> array(
+                                        'Q1' =>120,
+                                        'Q2' =>150,
+                                        'Q3' =>200,
+                                        'whisker_low' =>115,
+                                        'whisker_high' =>210
+                                        ),
+             ));
+        //dataarray, location
+        // Knsse::MakeAndSaveBoxPlotChartImage($charts_data,public_path().'/assets/output/images/');
 
-
-        // JavaScript::put([
-        //     'chartsdata' => json_encode($charts_data)
-        // ]);
-
-
-
-
-        // $now_dt = time();
-        // $tok = Job::generateRandomNumber(6);
-        // $pdf = Image::file('knsse.output');
-        // return $pdf->download('PDF-Report-'.$now_dt.'-'.$tok.'.jpg');
-
-
-        // $view = view('knsse.output');
-        // $contents = (string) $view;
-        // file_put_contents(public_path().'/assets/exercise.html', $contents);
-
-
-        // CloudConvert::file(public_path().'/assets/exercise.html')->withOptions([
-        //          'javascript_delay' => 5000
-        //     ])->to('doc');
-
-
-         // CloudConvert::website('http://k-nsse.webprinciples.com/charts')->withOptions([
-         //         'javascript_delay' => 5000
-         //    ])->to(public_path().'/assets/nyan.pdf');
+        // Knsse::MakeAndSaveSpiderChartImage($charts_data,public_path().'/assets/output/images/');
         
-        // CloudConvert::file(public_path().'/assets/myqr.png')->quality(70)->to('jpg');
-        // CloudConvert::website('www.nyan.cat')->to('/assets/nyan.jpg');
 
-
-        //WORKINGGG
-        // $data = array('data' =>json_encode($charts_data));
-        // $now_dt = time();
-        // $tok = Job::generateRandomNumber(6);
-        // $img = Image::loadView('knsse.output',$data)->save(public_path().'/assets/test.jpg');
-        //WORKING END
-
-
-        // $headers = array(
-        //     "Content-type"=>"text/html",
-        //     "Content-Disposition"=>"attachment;Filename=myfile.doc"
-        // );
-
-        // $p = public_path().'/assets/test.jpg';
-        // $content = '<html>
-        //             <head>
-        //             <meta charset="utf-8">
-        //             </head>
-        //             <body>
-        //                  <img src="'.$p.'" width="400px">
-        //             </body>
-        //             </html>';
-
-        // return Response::make($content,200, $headers);
-       
+        
 
         $data = json_encode($charts_data);
-        return view('knsse.output')
+
+        
+        // return view('knsse.BPoutput')
+        //     ->with('data',$data)
+        //     ->with('layout',$this->layout);
+        $data = json_encode($charts_data);
+        return view('knsse.SPoutput')
             ->with('data',$data)
             ->with('layout',$this->layout);
 
@@ -165,29 +130,96 @@ class AdminsController extends Controller
         // return $pdf->download('PDF-Report-'.$now_dt.'-'.$tok.'.pdf');
     }
     //convert page
-    public function postConvertToDocx() {
-
-        // file_put_contents(public_path().'/assets/exercise.html', Input::get('hdata'));
-        
-
-        // $now_dt = time();
-        // $tok = Job::generateRandomNumber(6);
-        // $pdf = Image::loadView('knsse.output');
-        // return $pdf->download('PDF-Report-'.$now_dt.'-'.$tok.'.png');
-            
-        // working    
-        // CloudConvert::file(public_path().'/assets/exercise.html')->quality(100)->to('jpg');
+    public function postConvertToImage() {
 
 
+        $status = 400;
+        $data=Input::get('hdata');
+        $fst= Input::get('fst');
+        if (isset($fst)) {
+            if ($fst==1) {
+                // DELETE EVERY FILE IN FOLDER
+                Job::DelEveryFile(public_path().'/assets/output/images/*');
+            }
+        }
+        if (isset($data)) {
+            $status = 200;
+            $tok = Job::generateRandomNumber(6).time();
+            $img = Image::loadHTML(json_decode($data))->save(public_path().'/assets/output/images/chartsp'.$tok.'.jpg');
+        }
+
+        if (isset($fst)) {
+            if ($fst==99) {
+
+                // DELETE EVERY FILE IN FOLDER
+                Job::DelEveryFile(public_path().'/assets/output/words/*');
+
+                // Creating the new document...
+                $phpWord = new \PhpOffice\PhpWord\PhpWord();
+
+                /* Note: any element you append to a document must reside inside of a Section. */
+
+                 // Adding an empty Section to the document...
+                $section = $phpWord->addSection();
+
+                // Adding Text element to the Section having font styled by default...
+                $section->addText(
+                    htmlspecialchars(
+                        '"Hello Baby'
+                            . 'The important thing is not to stop questioning." '
+                            . '(Albert Einstein)'
+                    )
+                );
+
+                // Saving the document as OOXML file...
+                $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+                $objWriter->save(public_path().'/assets/output/words/wordboyoung'.time().Job::generateRandomNumber(6).'.docx');
 
 
 
+
+
+            }
+        }
+
+        return Response::json(array(
+            'status' => $status
+        ));
     }
 
 
 
     public function getKNSSEIndex() {   
-        return view('admins.knsse_upload')
+                
+        // // A few settings
+        // $img_file = 'assets/myqr.jpg';
+        // // Read image path, convert to base64 encoding
+        // $imgData = base64_encode(file_get_contents($img_file));
+        // // Format the image SRC:  data:{mime};base64,{data};
+        // $src = 'data: '.mime_content_type($img_file).';base64,'.$imgData;
+        // // Echo out a sample image
+        // $myimge = '<img src="'.$src.'">';
+
+        $content = '<html>
+                    <head>
+                    <meta charset="utf-8">
+                    </head>
+                    <body>
+                        <p>
+                            My Content
+                            
+                        </p>
+                        <img src="myimage/myqr.jpg">
+                    </body>
+                    </html>';
+
+        // Filesystem::put('file.doc', $content);
+        file_put_contents(public_path().'/assets/output/words/file.doc',$content);
+
+
+
+
+        return view('knsse.index')
         ->with('layout',$this->layout);
     }
 
@@ -196,26 +228,31 @@ class AdminsController extends Controller
 
 
         $saved_file = Job::TmpFileSave($_FILES,public_path("assets/excel/tmp/"),'777');
-
-        Job::dump('**************SAVED****************');
-
         if ($saved_file['status']==200) {
             
             $full_path = $saved_file['ffpath'];
             Excel::load($full_path, function($reader) {
                 // Getting all results
                 $results = $reader->get();
-                Job::dump($results);
                 // ->all() is a wrapper for ->get() and will work the same
                 $results = $reader->all();
             });
 
 
-            Job::dump('**************DONE PRINTING****************');
 
+            $charts_data = array( 0 => array( 'label' =>'브드드람',
+                        'values'=> array(
+                                    'Q1' =>120,
+                                    'Q2' =>150,
+                                    'Q3' =>200,
+                                    'whisker_low' =>115,
+                                    'whisker_high' =>210
+                                    ),
+            ));
 
             return Response::json(array(
-                'status' => 200
+                'status' => 200,
+                'charts_data'=>$charts_data
             ));
         } else {
             return Response::json(array(

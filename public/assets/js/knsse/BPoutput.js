@@ -7,8 +7,8 @@ output = {
 		// console.log('ehre');
 		var mdata = jQuery.parseJSON(chartsdata);
 		MakeGraph('#chart1 svg',mdata);
-		// setTimeout(function(){ request.make_doc(); }, 1000);
-    }
+	}
+
 };
 
 request = {

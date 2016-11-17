@@ -18,7 +18,7 @@ Route::group(['prefix' => 'api/v1', 'middleware' => 'auth:api'], function () {
 
 
 Route::get('/charts',['uses' => 'AdminsController@getKnsseCharts']);
-Route::post('/make-doc',  ['uses' => 'AdminsController@postConvertToDocx']);
+Route::post('/save-as-image',  ['uses' => 'AdminsController@postConvertToImage']);
 
 
 
