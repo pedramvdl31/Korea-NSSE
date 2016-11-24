@@ -88,13 +88,6 @@ class AdminsController extends Controller
     }
 
     public function getKnsseCharts() { 
-
-
-
-        // DELETE EVERY FILE IN FOLDER
-        Job::DelEveryFile(public_path().'/assets/output/images/*');
-
-
         //DATA FOR BOX PLOT CHART
         $charts_data = array( 0 => array( 'label' =>'브드드람',
                             'values'=> array(
@@ -107,15 +100,8 @@ class AdminsController extends Controller
              ));
         //dataarray, location
         // Knsse::MakeAndSaveBoxPlotChartImage($charts_data,public_path().'/assets/output/images/');
-
         // Knsse::MakeAndSaveSpiderChartImage($charts_data,public_path().'/assets/output/images/');
-        
-
-        
-
         $data = json_encode($charts_data);
-
-        
         // return view('knsse.BPoutput')
         //     ->with('data',$data)
         //     ->with('layout',$this->layout);
@@ -131,90 +117,48 @@ class AdminsController extends Controller
     }
     //convert page
     public function postConvertToImage() {
-
-
         $status = 400;
         $data=Input::get('hdata');
-        $fst= Input::get('fst');
-        if (isset($fst)) {
-            if ($fst==1) {
-                // DELETE EVERY FILE IN FOLDER
-                Job::DelEveryFile(public_path().'/assets/output/images/*');
-            }
-        }
+        // $fst= Input::get('fst');
+        $fst= 1;
+        // if (isset($fst)) {
+        //     if ($fst==1) {
+        //         // DELETE EVERY FILE IN FOLDER
+        //         Job::DelEveryFile(public_path().'/assets/output/images/*');
+        //     }
+        // }
+        Job::DelEveryFile(public_path().'/assets/output/images/*');
         if (isset($data)) {
+            $newstyle= '<style type="text/css">
+
+                                    </style>';
+            $AppandedData = $newstyle.$data;
             $status = 200;
             $tok = Job::generateRandomNumber(6).time();
-            $img = Image::loadHTML(json_decode($data))->save(public_path().'/assets/output/images/chartsp'.$tok.'.jpg');
+            $img = Image::loadHTML($AppandedData)->setOption('height', 415)->setOption('width', 610)->save(public_path().'/assets/output/images/chartsp.jpg');
         }
-
-        if (isset($fst)) {
-            if ($fst==99) {
-
-                // DELETE EVERY FILE IN FOLDER
-                Job::DelEveryFile(public_path().'/assets/output/words/*');
-
-                // Creating the new document...
-                $phpWord = new \PhpOffice\PhpWord\PhpWord();
-
-                /* Note: any element you append to a document must reside inside of a Section. */
-
-                 // Adding an empty Section to the document...
-                $section = $phpWord->addSection();
-
-                // Adding Text element to the Section having font styled by default...
-                $section->addText(
-                    htmlspecialchars(
-                        '"Hello Baby'
-                            . 'The important thing is not to stop questioning." '
-                            . '(Albert Einstein)'
-                    )
-                );
-
-                // Saving the document as OOXML file...
-                $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
-                $objWriter->save(public_path().'/assets/output/words/wordboyoung'.time().Job::generateRandomNumber(6).'.docx');
-
-
-
-
-
-            }
-        }
-
         return Response::json(array(
             'status' => $status
         ));
     }
 
-
-
     public function getKNSSEIndex() {   
-                
-        // // A few settings
-        // $img_file = 'assets/myqr.jpg';
-        // // Read image path, convert to base64 encoding
-        // $imgData = base64_encode(file_get_contents($img_file));
-        // // Format the image SRC:  data:{mime};base64,{data};
-        // $src = 'data: '.mime_content_type($img_file).';base64,'.$imgData;
-        // // Echo out a sample image
-        // $myimge = '<img src="'.$src.'">';
 
-        $content = '<html>
-                    <head>
-                    <meta charset="utf-8">
-                    </head>
-                    <body>
-                        <p>
-                            My Content
+        // $content = '<html>
+        //             <head>
+        //             <meta charset="utf-8">
+        //             </head>
+        //             <body>
+        //                 <p>
+        //                     My Content
                             
-                        </p>
-                        <img src="myimage/myqr.jpg">
-                    </body>
-                    </html>';
+        //                 </p>
+        //                 <img src="myimage/myqr.jpg">
+        //             </body>
+        //             </html>';
 
-        // Filesystem::put('file.doc', $content);
-        file_put_contents(public_path().'/assets/output/words/file.doc',$content);
+        // // Filesystem::put('file.doc', $content);
+        // file_put_contents(public_path().'/assets/output/words/file.doc',$content);
 
 
 
@@ -238,17 +182,34 @@ class AdminsController extends Controller
                 $results = $reader->all();
             });
 
-
-
-            $charts_data = array( 0 => array( 'label' =>'브드드람',
-                        'values'=> array(
-                                    'Q1' =>120,
-                                    'Q2' =>150,
-                                    'Q3' =>200,
-                                    'whisker_low' =>115,
-                                    'whisker_high' =>210
-                                    ),
-            ));
+            $charts_data = array(   0 => array( 'label' =>'전국',
+                                            'values'=> array(
+                                                'Q1' =>20,
+                                                'Q2' =>23,
+                                                'Q3' =>27,
+                                                'whisker_low' =>19,
+                                                'whisker_high' =>28
+                                                )
+                                            ),
+                                    1 => array( 'label' =>'수도건大',
+                                            'values'=> array(
+                                                'Q1' =>23,
+                                                'Q2' =>30,
+                                                'Q3' =>40,
+                                                'whisker_low' =>20,
+                                                'whisker_high' =>42
+                                                )
+                                            ),
+                                    2 => array( 'label' =>'ACE 수도건大',
+                                            'values'=> array(
+                                                'Q1' =>23,
+                                                'Q2' =>24,
+                                                'Q3' =>29,
+                                                'whisker_low' =>20,
+                                                'whisker_high' =>30
+                                                )
+                                            )
+                                );
 
             return Response::json(array(
                 'status' => 200,

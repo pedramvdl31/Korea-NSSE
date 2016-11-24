@@ -55,7 +55,7 @@
           }
         </style>
     <div class="gallery" id="chart1" style="width:950px !important;height: 1000px">
-      <svg></svg>
+      <svg style="width: 900px"></svg>
     </div>
    </div>
 
