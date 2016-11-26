@@ -2591,61 +2591,6 @@
             .attr('width', $$.width)
             .attr('height', $$.height)
             .attr('class', CLASS.eventRect)
-            .on('mouseout', function () {
-                if (!$$.config) { return; } // chart is destroyed
-                if ($$.hasArcType()) { return; }
-                mouseout();
-            })
-            .on('mousemove', function () {
-                var targetsToShow = $$.filterTargetsToShow($$.data.targets);
-                var mouse, closest, sameXData, selectedData;
-
-                if ($$.dragging) { return; } // do nothing when dragging
-                if ($$.hasArcType(targetsToShow)) { return; }
-
-                mouse = d3.mouse(this);
-                closest = $$.findClosestFromTargets(targetsToShow, mouse);
-
-                if ($$.mouseover && (!closest || closest.id !== $$.mouseover.id)) {
-                    config.data_onmouseout.call($$.api, $$.mouseover);
-                    $$.mouseover = undefined;
-                }
-
-                if (! closest) {
-                    mouseout();
-                    return;
-                }
-
-                if ($$.isScatterType(closest) || !config.tooltip_grouped) {
-                    sameXData = [closest];
-                } else {
-                    sameXData = $$.filterByX(targetsToShow, closest.x);
-                }
-
-                // show tooltip when cursor is close to some point
-                selectedData = sameXData.map(function (d) {
-                    return $$.addName(d);
-                });
-                $$.showTooltip(selectedData, this);
-
-                // expand points
-                if (config.point_focus_expand_enabled) {
-                    $$.expandCircles(closest.index, closest.id, true);
-                }
-                $$.expandBars(closest.index, closest.id, true);
-
-                // Show xgrid focus line
-                $$.showXGridFocus(selectedData);
-
-                // Show cursor as pointer if point is close to mouse position
-                if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
-                    $$.svg.select('.' + CLASS.eventRect).style('cursor', 'pointer');
-                    if (!$$.mouseover) {
-                        config.data_onmouseover.call($$.api, closest);
-                        $$.mouseover = closest;
-                    }
-                }
-            })
             .on('click', function () {
                 var targetsToShow = $$.filterTargetsToShow($$.data.targets);
                 var mouse, closest;

@@ -3,6 +3,12 @@ $(document).ready(function(){
 	knsseup.events();
 	knsseup.file_upload();
 	myCharts.Init();
+
+    window.dstl = ["10, 0","5, 1", "5, 5","2, 2"];
+    window.cls = ["#0070ff","blue", "yellow","green"];
+    window.lcol = ["#d4e3f6","#99a86a", "#51181e","#232323"];
+    window.lcol2 = ["#0070ff","#99a86a", "#51181e","#232323"];
+    window.cop = ["0.2","0", "0","0"];
 });
 knsseup = {
 	pageLoad: function() {
@@ -58,26 +64,12 @@ knsseup = {
 			        			//MAKE BOX PLOT GRAPH
 
 
-                      GenPBGraph(data.charts_data);
-                      GenRDGraph(data.charts_data);
+                      // GenPBGraph(data.charts_data);
+                      // GenRDGraph(data.charts_data);
                       GenLineGraph(data.charts_data);
 
-                      GenPBGraph(data.charts_data);
-                      GenRDGraph(data.charts_data);
-                      GenLineGraph(data.charts_data);
-
-                      GenPBGraph(data.charts_data);
-                      GenRDGraph(data.charts_data);
-                      GenLineGraph(data.charts_data);
-
-                      GenPBGraph(data.charts_data);
-                      GenRDGraph(data.charts_data);
-                      GenLineGraph(data.charts_data);
-
-                      GenPBGraph(data.charts_data);
-                      GenRDGraph(data.charts_data);
-                      GenLineGraph(data.charts_data);
 			        			
+
 
 
 
@@ -128,7 +120,7 @@ request = {
 
 function GenPBGraph(data) {
   var boxplotnum = AppendBoxPlotHtml();
-  MakeGraph('#chart'+boxplotnum+' svg',data);
+  MakeBPGraph('#chart'+boxplotnum+' svg',data,boxplotnum);
 }
 function AppendBoxPlotHtml(){
   var bpcrtlen = $(document).find('.chrts').length;
@@ -163,62 +155,193 @@ function getRDBaseHtml(){
   return rdcrtlen;
 }
 
-function GenLineGraph(data) {
-  var linenum = LineHtml();
-  
-  var chart = c3.generate({
-        bindto: '#chart'+linenum,
-        size: {
-            height: 200,
-            width: 530
-        },
-        data: {
-            columns: [
-                ['data1', 30, 20, 10, 40, 15, 25, 50, 10, 25, 25],
-                ['data2', 10, 10, 12, 40, 35, 25, 50, 20, 15, 50]
-            ]
-        },point: {
-          r: function (d) {
-            return d.id === 'data2' ? 5 : 3;
-          }
-        },
-        axis: {
-            x: {
-              show: false,
-              type: 'category',
-              categories: ['', '', '', '', '', '', '', '', '']
-            },
-            y: {
-                max: 50,
-                min: 10,
-                tick: {
-                  format: function (d) {if (d != "15" && d != "25" && d != "35" && d != "45" ) return d}
-                }
-            }
-        },
-        tooltip: {
-            show: false
-        },
-        legend: {
-          show: false
-        },
-        grid: {
-          y: {
-              show: true
-          }
-        }
+function GenLineGraph(el) {
+    var elnum = LineHtml();
+    var color = function(i) {
+        var colors = ["#0a2469", "#49abe5",
+                      "#6d0000", "#c34949"];
+        return colors[i % colors.length]
+    };
+
+    // What symbols are we going to use for the different
+    // datasets.
+    var symbol = function(i) {
+        var symbols = ["circle", "diamond", "square",
+                       "triangle-up", "triangle-down", "cross"];
+        return d3.svg.symbol()
+                 .size(40)
+                 .type(symbols[i % symbols.length]);
+    };
+
+    // Define the dimensions of the visualization.
+    var margin = {top: 80, right: 170, bottom: 50, left: 50},
+        width = 706 - margin.left - margin.right,
+        height = 436 - margin.top - margin.bottom;
+
+    var x = d3.time.scale()
+        .range([0, width]);
+
+    var y = d3.scale.linear()
+        .range([height, 0]);
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .tickSize(0, 0, 0)
+        .tickPadding(10)
+        .tickFormat(d3.time.format("%b"))
+        .orient("bottom");
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .tickSize(-width, 0, 0)
+        .tickPadding(10)
+        .orient("left");
+
+    var line = d3.svg.line()
+        .x(function(d) { return x(d.date); })
+        .y(function(d) { return y(d.temp); });
+
+    var svg = d3.select('#chart'+elnum).append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left +
+              "," + margin.top + ")");
+
+    // Define the data
+    var datasets = [{
+      "name": "2014년 3학년",
+      "data": [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3]
+     },{
+      "name": "2015년 4학년",
+      "data": [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1]
+     }];
+
+    datasets.forEach(function(dataset) {
+        dataset.data = dataset.data.map(function(d,i) {
+            return {
+                "date": d3.time.month.offset(
+                            new Date(2013,0,1), i),
+                "temp": d
+            };
+        });
+    })
+
+    var xMin = new Date(2013,0,1),
+        xMax = d3.time.month.offset(xMin,
+                   d3.max(datasets,function(dataset) {
+                       return dataset.data.length-1;
+               }));
+    x.domain([d3.time.day.offset(xMin,-16),
+          d3.time.day.offset(xMax,15)]);
+
+    // For the y-values, we want the chart to show the minimum
+        // and maximum valuesfrom all the datasets.
+        var yMin = d3.min(datasets, function(dataset) {
+        return d3.min(dataset.data, function(d) {
+                return d.temp;
+        });
+        });
+        var yMax = d3.max(datasets, function(dataset) {
+        return d3.max(dataset.data, function(d) {
+            return d.temp;
+        });
+    });
+
+    // The `.nice()` function gives the domain nice
+    // rounded limits.
+    y.domain([yMin, yMax]).nice();
+
+
+    // For the y-axis, we add a label.
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+
+    svg.selectAll(".axis line, .axis path")
+        .attr("fill", "none")
+        .attr("stroke", "#bbbbbb")
+        .attr("stroke-width", "2px")
+        .attr("shape-rendering", "crispEdges");
+
+    svg.selectAll(".axis text")
+        .attr("font-size", "14");
+
+    svg.selectAll(".axis .tick line")
+        .attr("stroke", "#d0d0d0")
+        .attr("stroke-width", "1");
+
+
+    // Plot the data and the legend
+    datasets.forEach(function(dataset, i) {
+
+        // Individual points
+        svg.selectAll(".point.dataset-" + i)
+            .data(dataset.data)
+          .enter().append("path")
+            .attr("class", "point dataset-" + i)
+            .attr("fill", color(i))
+            .attr("stroke", color(i))
+            .attr("d", symbol(i))
+            .attr("transform", function(d) {
+                return "translate(" + x(d.date) +
+                                  "," + y(d.temp) + ")";
+            });
+
+        // Connect the points with lines
+        svg.append("path")
+            .datum(dataset.data)
+            .attr("class", "line dataset-" + i)
+            .attr("fill", "none")
+            .attr("stroke", color(i))
+            .attr("stroke-width", "2")
+            .style("stroke-dasharray",dstl[i])
+            .attr("d", line);
+
+        d3.select("svg").append("path")
+            .attr("class", "point dataset-" + i)
+            .attr("fill", color(i))
+            .attr("stroke", color(i))
+            .attr("d", symbol(i))
+            .attr("transform", "translate(" +
+                (margin.left + width + 40) + "," +
+                (20*i + margin.top + height/2 -
+                 20*datasets.length/2 - 6) + ")");
+
+        d3.select("svg").append("line")
+            .attr("class", "line dataset-" + i)
+            .attr("stroke", color(i))
+            .attr("stroke-width", "2")
+            .style("stroke-dasharray",dstl[i])
+            .attr("x1", margin.left + width + 30)
+            .attr("x2", margin.left + width + 50)
+            .attr("y1", 20*i + margin.top + height/2 -
+                        20*datasets.length/2 - 6)
+            .attr("y2", 20*i + margin.top + height/2 -
+                        20*datasets.length/2 - 6);
+
+        d3.select("svg").append("text")
+            .attr("transform", "translate(" +
+                (margin.left + width + 60) + "," +
+                (20*i + margin.top + height/2 -
+                 20*datasets.length/2) + ")")
+            .attr("class", "legend")
+            .attr("font-size", "15")
+            .attr("text-anchor", "left")
+            .text(dataset.name);
+
     });
 }
 function LineHtml(){
   var linelen = $(document).find('.chrts').length;
-  var html= '<div id="picturediv"> <div id="chartwrapper"> <div id="containermy" style=""> <div class="chrts" id="chart'+linelen+'"></div> <div class="cs relat" id="table"> <table class="mytable"> <tr> <th class="t2td" style="border:none !important"></th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습고차 학습학습</th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습</th> </tr> <tr> <td class="frth"><span class="hrt2"><hr id="lhr" align="left" width="100%"></span><span class="textt2">&nbsp;2014년 전체</span></td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> </tr> <tr> <td class="frth"><span class="hrt2"><hr id="lhr2" align="left" width="100%"></span><span class="textt2">&nbsp;2014년 전체</span></td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> </tr> </table> </div> </div> </div> </div>';
+  var html= '<div id="picturediv" style="height:900px"> <div id="chartwrapper"> <div id="containermy" style=""> <div class="chrts" id="chart'+linelen+'"></div> <div class="cs relat" id="table"> <table class="mytable"> <tr> <th class="t2td" style="border:none !important"></th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습고차 학습학습</th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습</th> </tr> <tr> <td class="frth"><span class="hrt2"><hr id="lhr" align="left" width="100%"></span><span class="textt2">&nbsp;2014년 전체</span></td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> </tr> <tr> <td class="frth"><span class="hrt2"><hr id="lhr2" align="left" width="100%"></span><span class="textt2">&nbsp;2014년 전체</span></td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> </tr> </table> </div> </div> </div> </div>';
   $('#ww').append(html);
   return linelen;
 }
 
 
 
-function MakeGraph(elem, data){
+function MakeBPGraph(elem, data,gid){
   var width = 300,
       height = 300;
 
@@ -241,7 +364,7 @@ function MakeGraph(elem, data){
   	  .datum(data)
   	  .call(chart);
 
-    d3.select('#chart1 svg')
+    d3.select('#chart'+gid+' svg')
       .append("text")
       .attr("x", 180)             
       .attr("y", 15)
@@ -317,29 +440,29 @@ function MakeRadarGraph(p1,p2){
                 {axis:"다양한",value:0.19},
                 {axis:"다양한",value:0.14}
               ],[
-                {axis:"다양한",value:0.48},
-                {axis:"다양한",value:0.41},
-                {axis:"다양한",value:0.27},
                 {axis:"다양한",value:0.28},
+                {axis:"다양한",value:0.4},
+                {axis:"다양한",value:0.23},
+                {axis:"다양한",value:0.78},
                 {axis:"다양한",value:0.46},
                 {axis:"다양한",value:0.29},
-                {axis:"다양한",value:0.11},
-                {axis:"다양한",value:0.14},
-                {axis:"다양한",value:0.05},
-                {axis:"다양한",value:0.19},
-                {axis:"다양한",value:0.14}
+                {axis:"다양한",value:0.51},
+                {axis:"다양한",value:0.64},
+                {axis:"다양한",value:0.55},
+                {axis:"다양한",value:0.79},
+                {axis:"다양한",value:0.24}
               ],[
                 {axis:"다양한",value:0.48},
+                {axis:"다양한",value:0.53},
+                {axis:"다양한",value:0.71},
+                {axis:"다양한",value:0.18},
+                {axis:"다양한",value:0.62},
                 {axis:"다양한",value:0.23},
-                {axis:"다양한",value:0.11},
-                {axis:"다양한",value:0.28},
-                {axis:"다양한",value:0.32},
-                {axis:"다양한",value:0.23},
-                {axis:"다양한",value:0.11},
-                {axis:"다양한",value:0.52},
-                {axis:"다양한",value:0.15},
-                {axis:"다양한",value:0.14},
-                {axis:"다양한",value:0.24}
+                {axis:"다양한",value:0.41},
+                {axis:"다양한",value:0.72},
+                {axis:"다양한",value:0.25},
+                {axis:"다양한",value:0.44},
+                {axis:"다양한",value:0.54}
               ]
             ];
 
@@ -371,22 +494,33 @@ function MakeRadarGraph(p1,p2){
         .attr('transform', 'translate(90,20)') 
         ;
     //Create colour squares
+    // legend.selectAll('rect')
+    //   .data(LegendOptions)
+    //   .enter()
+    //   .append("rect")
+    //   .attr("x", w - 65)
+    //   .attr("y", function(d, i){ return i * 20;})
+    //   .attr("width", 10)
+    //   .attr("height", 10)
+
+    //   .style("fill", function(d, i){ return colorscale(i);})
+    //   ;
     legend.selectAll('rect')
-      .data(LegendOptions)
-      .enter()
-      .append("rect")
-      .attr("x", w - 65)
-      .attr("y", function(d, i){ return i * 20;})
-      .attr("width", 10)
-      .attr("height", 10)
-      .style("fill", function(d, i){ return colorscale(i);})
-      ;
+        .data(LegendOptions)
+        .enter()
+        .append("line")//making a line for legend
+        .attr("x1", w - 68)
+        .attr("x2", w - 50)
+        .attr("y1", function(d, i){ return i * 20;})
+        .attr("y2", function(d, i){ return i * 20;})
+        .style("stroke-dasharray",function(d, i){ return dstl[i];})//dashed array for line
+        .style("stroke", function(d, i){ return lcol2[i];});
     //Create text next to squares
     legend.selectAll('text')
       .data(LegendOptions)
       .enter()
       .append("text")
-      .attr("x", w - 52)
+      .attr("x", w - 50)
       .attr("y", function(d, i){ return i * 20 + 9;})
       .attr("font-size", "11px")
       .attr("fill", "#737373")

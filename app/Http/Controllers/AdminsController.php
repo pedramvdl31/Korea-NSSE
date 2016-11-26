@@ -135,7 +135,7 @@ class AdminsController extends Controller
             $AppandedData = $newstyle.$data;
             $status = 200;
             $tok = Job::generateRandomNumber(6).time();
-            $img = Image::loadHTML($AppandedData)->setOption('height', 415)->setOption('width', 610)->save(public_path().'/assets/output/images/chartsp.jpg');
+            $img = Image::loadHTML($AppandedData)->setOption('height', 600)->setOption('width', 650)->save(public_path().'/assets/output/images/chartsp.jpg');
         }
         return Response::json(array(
             'status' => $status

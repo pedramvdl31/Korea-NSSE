@@ -8,7 +8,7 @@
   <script src="/assets/js/d3/d3.min.js" charset="utf-8"></script>
   <script src="/assets/js/d3/nv.d3.js"></script>
   <script src="/assets/js/d3/RadarChart.js"></script>
-  <script src="/packages/c3-0.4.11/c3.min.js"></script>
+  <script src="/packages/c3-0.4.11/c3.js"></script>
 
   <script src="/assets/js/admins/knsse_upload.js"></script>
 @stop
@@ -70,7 +70,7 @@
 
         <style type="text/css">
           #picturediv{
-          width: 610px;
+          width: 900px;
           height: 500px;
           position: relative;
           float: left;
@@ -102,11 +102,11 @@
           stroke: #000;
           shape-rendering: crispEdges;
           }
-          path {
+/*          path {
           stroke: steelblue;
           stroke-width: 2;
           fill: none !important; 
-          }
+          }*/
           g{
           background: transparent !important; 
           background-color: transparent !important; 
@@ -170,8 +170,8 @@
           .cs{
           width: 590px;
           float: left;
-          top: -8px;
-          left: -71px;
+          top: -55px;
+          left: -61px;
           }
           }
           .textt2{
@@ -243,8 +243,8 @@
 
 
 
-
-
+<!-- <div id="chart0"></div> -->
+        <div class="chrts" id="chart0"></div>
 
       </div>
     </div>
