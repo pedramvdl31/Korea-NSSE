@@ -29,9 +29,8 @@ return array(
         'binary'  => 'assets/h4cc/wkhtmltoimage-amd64/bin/wkhtmltoimage-amd64',
         'timeout' => false,
         'options' =>    array(
-                'enable-javascript' => true, 
-                'javascript-delay' => 1000, 
-                'no-stop-slow-scripts' => true, 
+                'enable-javascript' => false, 
+                'no-stop-slow-scripts' => false, 
                 'encoding' => 'utf-8',
                 'images' => true,
                 'cookie' => array()

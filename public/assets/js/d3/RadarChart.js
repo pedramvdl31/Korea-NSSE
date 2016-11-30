@@ -20,8 +20,8 @@ var RadarChart = {
 	 maxValue: 0,
 	 radians: 2 * Math.PI,
 	 opacityArea: 0.5,
-	 ToRight: 5,
-	 TranslateX: 80,
+	 ToRight: 0,
+	 TranslateX: 60,
 	 TranslateY: 30,
 	 ExtraWidthX: 100,
 	 ExtraWidthY: 100,
@@ -39,7 +39,7 @@ var RadarChart = {
 	var allAxis = (d[0].map(function(i, j){return i.axis}));
 	var total = allAxis.length;
 	var radius = cfg.factor*Math.min(cfg.w/2, cfg.h/2);
-	var Format = d3.format('%');
+	var Format = d3.format(',.0f');
 	d3.select(id).select("svg").remove();
 	
 	var g = d3.select(id)
@@ -110,6 +110,8 @@ var RadarChart = {
 		.style("font-family", "sans-serif")
 		.style("font-size", "11px")
 		.attr("text-anchor", "middle")
+
+      .style("font-weight", "900")
 		.attr("dy", "1.5em")
 		.attr("transform", function(d, i){return "translate(0, -10)"})
 		.attr("x", function(d, i){return cfg.w/2*(1-cfg.factorLegend*Math.sin(i*cfg.radians/total))-60*Math.sin(i*cfg.radians/total);})

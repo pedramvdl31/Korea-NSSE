@@ -64,15 +64,9 @@ knsseup = {
 			        			//MAKE BOX PLOT GRAPH
 
 
-                      // GenPBGraph(data.charts_data);
-                      // GenRDGraph(data.charts_data);
-                      GenLineGraph(data.charts_data);
-
-			        			
-
-
-
-
+                                // GenPBGraph(data.charts_data);
+                                GenRDGraph(data.charts_data,10,377,1);
+                                // GenLineGraph(data.charts_data,250,630,1);
 
 			        		break;
 			        		case 400:
@@ -99,14 +93,16 @@ myCharts = {
 
 
 request = {
-    save_image: function(bdata,fst) {
+    save_image: function(bdata,wi,he,pnum) {
         var token = $('meta[name=csrf-token]').attr('content');
         $.post(
             '/save-as-image',
             {
                 "_token": token,
                 "hdata": bdata,
-                "fst":fst
+                "pnum":pnum,
+                "width":wi,
+                "height":he
             },
             function(result){
                 var status = result.status;
@@ -133,29 +129,163 @@ function AppendBoxPlotHtml(){
     return bpcrtlen;
 }
 
-function GenRDGraph(data) {
-  var rdcrtlen = getRDBaseHtml();
-  MakeRadarGraph('#chart'+rdcrtlen,'#sc'+rdcrtlen);
-}
-function getRDBaseHtml(){
-  var rdcrtlen = $(document).find('.chrts').length;
-  var html = '<style>'+
-              '.nv-boxplot-box{fill: none !important;}'+
-              '.nv-boxplot-tick,.nv-boxplot-whisker,.nv-boxplot-box{stroke:black !important;}'+
-              'text {font:12px sans-serif;}'+
-              'svg {display:block;}'+
-              'svg {margin:0px;padding:0px;height:100% !important;width: 100% !important;}'+
-              '</style>'+
-              '<div class="curchart" id="sc'+rdcrtlen+'" style="">'+
-                '<div class="chrts rdcrt" id="chart'+rdcrtlen+'" style="width:450px !important;height: 400px;float:left;">'+
-                  '<svg></svg>'+
-                '</div>'+
-              '</div>';
-  $('#ww').append(html);
-  return rdcrtlen;
+function GenRDGraph(data,wi,he,pnum) {
+    var elnum = getRDBaseHtml();
+    var p1 = '#ch'+elnum;
+    var p2 = '#sc'+elnum;
+    var w = 300,h = 300;
+    var colorscale = d3.scale.category10();
+    //Legend titles
+    var LegendOptions = ['전국','수도건大','수도건大','가나대학교'];
+    //Data
+    var d = [
+              [
+                {axis:"다양한 그룹과 토론",value:59},
+                {axis:"다양한",value:56},
+                {axis:"다양한",value:52},
+                {axis:"다양한",value:54},
+                {axis:"다양한",value:58},
+                {axis:"다양한",value:54},
+                {axis:"다양한",value:51},
+                {axis:"다양한",value:55},
+                {axis:"다양한",value:57},
+                {axis:"다양한",value:52},
+                {axis:"다양한",value:57}
+              ],[
+                {axis:"다양한",value:48},
+                {axis:"다양한",value:41},
+                {axis:"다양한",value:47},
+                {axis:"다양한",value:48},
+                {axis:"다양한",value:46},
+                {axis:"다양한",value:49},
+                {axis:"다양한",value:41},
+                {axis:"다양한",value:40},
+                {axis:"다양한",value:45},
+                {axis:"다양한",value:49},
+                {axis:"다양한",value:44}
+              ],[
+                {axis:"다양한",value:28},
+                {axis:"다양한",value:24},
+                {axis:"다양한",value:23},
+                {axis:"다양한",value:20},
+                {axis:"다양한",value:26},
+                {axis:"다양한",value:29},
+                {axis:"다양한",value:21},
+                {axis:"다양한",value:40},
+                {axis:"다양한",value:25},
+                {axis:"다양한",value:29},
+                {axis:"다양한",value:24}
+              ],[
+                {axis:"다양한",value:58},
+                {axis:"다양한",value:53},
+                {axis:"다양한",value:51},
+                {axis:"다양한",value:58},
+                {axis:"다양한",value:50},
+                {axis:"다양한",value:53},
+                {axis:"다양한",value:41},
+                {axis:"다양한",value:52},
+                {axis:"다양한",value:55},
+                {axis:"다양한",value:54},
+                {axis:"다양한",value:54}
+              ]
+            ];
+
+    var mycfg = {
+      w: w,
+      h: h,
+      maxValue: 60,
+      levels: 6,
+      ExtraWidthX: 150
+    }
+
+    //Call function to draw the Radar chart
+    //Will expect that data is in %'s
+    RadarChart.draw(p1, d,mycfg);
+
+    var svg = d3.select(p2)
+        .selectAll('svg')
+        .append('svg')
+        .attr("width", w+300)
+        .attr("height", h)
+
+    //Create the title for the legend
+    // var text = svg.append("text")
+    //     .attr("class", "title")
+    //     .attr('transform', 'translate(90,0)') 
+    //     .attr("x", w - 70)
+    //     .attr("y", 10)
+    //     .attr("font-size", "12px")
+    //     .attr("fill", "#404040")
+    //     .text("What % of owners use a specific service in a week");
+            
+    //Initiate Legend   
+    var legend = svg.append("g")
+        .attr("class", "legend")
+        .attr("height", 100)
+        .attr("width", 200)
+        .attr('transform', 'translate(90,20)') 
+        ;
+    //Create colour squares
+    // legend.selectAll('rect')
+    //   .data(LegendOptions)
+    //   .enter()
+    //   .append("rect")
+    //   .attr("x", w - 65)
+    //   .attr("y", function(d, i){ return i * 20;})
+    //   .attr("width", 10)
+    //   .attr("height", 10)
+
+    //   .style("fill", function(d, i){ return colorscale(i);})
+    //   ;
+    legend.selectAll('rect')
+        .data(LegendOptions)
+        .enter()
+        .append("line")//making a line for legend
+        .attr("x1", w - 20)
+        .attr("x2", w - 2)
+        .attr("y1", function(d, i){ return ((i * 20)+5);})
+        .attr("y2", function(d, i){ return ((i * 20)+5);})
+        .style("stroke-dasharray",function(d, i){ return dstl[i];})//dashed array for line
+        .style("stroke", function(d, i){ return lcol2[i];});
+    //Create text next to squares
+    legend.selectAll('text')
+      .data(LegendOptions)
+      .enter()
+      .append("text")
+      .attr("x", w)
+      .attr("y", function(d, i){ return i * 20 + 9;})
+      .attr("font-size", "11px")
+      .style("font-weight", "900")
+      .attr("fill", "#737373")
+      .text(function(d) { return d; });
+
+    //SAVE GRAPH AS IMAGE
+    var htmlel = $(document).find('.pd'+elnum).html();
+    request.save_image(htmlel,wi,he,pnum);
 }
 
-function GenLineGraph(el) {
+function getRDBaseHtml(){
+    var linelen = randomid();
+    while(($(document).find('#ch'+linelen).length)!=0){
+        linelen = randomid();
+    }
+    var h = '<style>'+
+          '.nv-boxplot-box{fill: none !important;}'+
+          '.nv-boxplot-tick,.nv-boxplot-whisker,.nv-boxplot-box{stroke:black !important;}'+
+          'text {font:12px sans-serif;}'+
+          'svg {display:block;}'+
+          'svg {margin:0px;padding:0px;height:100% !important;width: 100% !important;}'+
+          '</style>'+
+          '<div class="curchart pd'+linelen+'" id="sc'+linelen+'">'+
+            '<div class="chrts rdcrt" id="ch'+linelen+'" style="width:450px !important;height: 400px;float:left;">'+
+              '<svg></svg>'+
+            '</div>'+
+          '</div>';
+    $('#ww').append(h);
+    return linelen;
+}
+
+function GenLineGraph(el,wi,he,pnum) {
     var elnum = LineHtml();
     var color = function(i) {
         var colors = ["#0a2469", "#49abe5",
@@ -174,7 +304,7 @@ function GenLineGraph(el) {
     };
 
     // Define the dimensions of the visualization.
-    var margin = {top: 80, right: 170, bottom: 50, left: 50},
+    var margin = {top: 10, right: 10, bottom: 10, left: 50},
         width = 706 - margin.left - margin.right,
         height = 436 - margin.top - margin.bottom;
 
@@ -201,7 +331,7 @@ function GenLineGraph(el) {
         .x(function(d) { return x(d.date); })
         .y(function(d) { return y(d.temp); });
 
-    var svg = d3.select('#chart'+elnum).append("svg")
+    var svg = d3.select('#ch'+elnum).append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -214,7 +344,7 @@ function GenLineGraph(el) {
       "data": [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3]
      },{
       "name": "2015년 4학년",
-      "data": [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1]
+      "data": [-0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
      }];
 
     datasets.forEach(function(dataset) {
@@ -275,6 +405,9 @@ function GenLineGraph(el) {
     // Plot the data and the legend
     datasets.forEach(function(dataset, i) {
 
+        $(document).find('#leg'+i).css('color',color(i));
+        // Individual points
+        $(document).find('#hr'+i).css('border-color',color(i));
         // Individual points
         svg.selectAll(".point.dataset-" + i)
             .data(dataset.data)
@@ -298,43 +431,19 @@ function GenLineGraph(el) {
             .style("stroke-dasharray",dstl[i])
             .attr("d", line);
 
-        d3.select("svg").append("path")
-            .attr("class", "point dataset-" + i)
-            .attr("fill", color(i))
-            .attr("stroke", color(i))
-            .attr("d", symbol(i))
-            .attr("transform", "translate(" +
-                (margin.left + width + 40) + "," +
-                (20*i + margin.top + height/2 -
-                 20*datasets.length/2 - 6) + ")");
-
-        d3.select("svg").append("line")
-            .attr("class", "line dataset-" + i)
-            .attr("stroke", color(i))
-            .attr("stroke-width", "2")
-            .style("stroke-dasharray",dstl[i])
-            .attr("x1", margin.left + width + 30)
-            .attr("x2", margin.left + width + 50)
-            .attr("y1", 20*i + margin.top + height/2 -
-                        20*datasets.length/2 - 6)
-            .attr("y2", 20*i + margin.top + height/2 -
-                        20*datasets.length/2 - 6);
-
-        d3.select("svg").append("text")
-            .attr("transform", "translate(" +
-                (margin.left + width + 60) + "," +
-                (20*i + margin.top + height/2 -
-                 20*datasets.length/2) + ")")
-            .attr("class", "legend")
-            .attr("font-size", "15")
-            .attr("text-anchor", "left")
-            .text(dataset.name);
-
     });
+
+
+    //SAVE GRAPH AS IMAGE
+    var htmlel = $(document).find('.pd'+elnum).html();
+    request.save_image(htmlel,wi,he,pnum);
 }
 function LineHtml(){
-  var linelen = $(document).find('.chrts').length;
-  var html= '<div id="picturediv" style="height:900px"> <div id="chartwrapper"> <div id="containermy" style=""> <div class="chrts" id="chart'+linelen+'"></div> <div class="cs relat" id="table"> <table class="mytable"> <tr> <th class="t2td" style="border:none !important"></th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습고차 학습학습</th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습</th> <th>고차원 학습</th> </tr> <tr> <td class="frth"><span class="hrt2"><hr id="lhr" align="left" width="100%"></span><span class="textt2">&nbsp;2014년 전체</span></td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> </tr> <tr> <td class="frth"><span class="hrt2"><hr id="lhr2" align="left" width="100%"></span><span class="textt2">&nbsp;2014년 전체</span></td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> <td>45.3</td> </tr> </table> </div> </div> </div> </div>';
+  var linelen = randomid();
+  while(($(document).find('#ch'+linelen).length)!=0){
+    linelen = randomid();
+  }
+  var html= '<div class="pd'+linelen+'" id="picturediv" style="height:900px"> <div id="chartwrapper"> <div id="containermy" style=""> <div class="chrts" id="ch'+linelen+'"></div> <div class="cs relat" id="table"> <table class="mytable"> <tr> <th class="t2td" style="border:none !important"> </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습고차 학습학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> </tr> <tr> <td class="frth" id="leg0"> <span class="hrt2"> <hr id="hr0" align="left" width="100%"> <span class="lsymb">•</span></span> <span class="textt2">&nbsp;2014년 전체 </span> </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> </tr> <tr> <td class="frth" id="leg1"> <span class="hrt2 "> <hr id="hr1" align="left" width="20px"> <span class="lsymb lsymbd">♦</span> </span> <span class="textt2">&nbsp;2014년 전체 </span> </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> </tr> </table> </div> </div> </div> </div>';
   $('#ww').append(html);
   return linelen;
 }
@@ -407,122 +516,14 @@ function MakeBPGraph(elem, data,gid){
 }
 
 function MakeRadarGraph(p1,p2){
-    var w = 350,
-    h = 200;
+ 
+}
 
-    var colorscale = d3.scale.category10();
-    //Legend titles
-    var LegendOptions = ['전국','수도건大','수도건大','가나대학교'];
-    //Data
-    var d = [
-              [
-                {axis:"다양한 그룹과 토론",value:0.59},
-                {axis:"다양한",value:0.56},
-                {axis:"다양한",value:0.42},
-                {axis:"다양한",value:0.34},
-                {axis:"다양한",value:0.48},
-                {axis:"다양한",value:0.14},
-                {axis:"다양한",value:0.11},
-                {axis:"다양한",value:0.05},
-                {axis:"다양한",value:0.07},
-                {axis:"다양한",value:0.12},
-                {axis:"다양한",value:0.27}
-              ],[
-                {axis:"다양한",value:0.48},
-                {axis:"다양한",value:0.41},
-                {axis:"다양한",value:0.27},
-                {axis:"다양한",value:0.28},
-                {axis:"다양한",value:0.46},
-                {axis:"다양한",value:0.29},
-                {axis:"다양한",value:0.11},
-                {axis:"다양한",value:0.14},
-                {axis:"다양한",value:0.05},
-                {axis:"다양한",value:0.19},
-                {axis:"다양한",value:0.14}
-              ],[
-                {axis:"다양한",value:0.28},
-                {axis:"다양한",value:0.4},
-                {axis:"다양한",value:0.23},
-                {axis:"다양한",value:0.78},
-                {axis:"다양한",value:0.46},
-                {axis:"다양한",value:0.29},
-                {axis:"다양한",value:0.51},
-                {axis:"다양한",value:0.64},
-                {axis:"다양한",value:0.55},
-                {axis:"다양한",value:0.79},
-                {axis:"다양한",value:0.24}
-              ],[
-                {axis:"다양한",value:0.48},
-                {axis:"다양한",value:0.53},
-                {axis:"다양한",value:0.71},
-                {axis:"다양한",value:0.18},
-                {axis:"다양한",value:0.62},
-                {axis:"다양한",value:0.23},
-                {axis:"다양한",value:0.41},
-                {axis:"다양한",value:0.72},
-                {axis:"다양한",value:0.25},
-                {axis:"다양한",value:0.44},
-                {axis:"다양한",value:0.54}
-              ]
-            ];
-
-    //Call function to draw the Radar chart
-    //Will expect that data is in %'s
-    RadarChart.draw(p1, d);
-
-    var svg = d3.select(p2)
-        .selectAll('svg')
-        .append('svg')
-        .attr("width", w+300)
-        .attr("height", h)
-
-    //Create the title for the legend
-    // var text = svg.append("text")
-    //     .attr("class", "title")
-    //     .attr('transform', 'translate(90,0)') 
-    //     .attr("x", w - 70)
-    //     .attr("y", 10)
-    //     .attr("font-size", "12px")
-    //     .attr("fill", "#404040")
-    //     .text("What % of owners use a specific service in a week");
-            
-    //Initiate Legend   
-    var legend = svg.append("g")
-        .attr("class", "legend")
-        .attr("height", 100)
-        .attr("width", 200)
-        .attr('transform', 'translate(90,20)') 
-        ;
-    //Create colour squares
-    // legend.selectAll('rect')
-    //   .data(LegendOptions)
-    //   .enter()
-    //   .append("rect")
-    //   .attr("x", w - 65)
-    //   .attr("y", function(d, i){ return i * 20;})
-    //   .attr("width", 10)
-    //   .attr("height", 10)
-
-    //   .style("fill", function(d, i){ return colorscale(i);})
-    //   ;
-    legend.selectAll('rect')
-        .data(LegendOptions)
-        .enter()
-        .append("line")//making a line for legend
-        .attr("x1", w - 68)
-        .attr("x2", w - 50)
-        .attr("y1", function(d, i){ return i * 20;})
-        .attr("y2", function(d, i){ return i * 20;})
-        .style("stroke-dasharray",function(d, i){ return dstl[i];})//dashed array for line
-        .style("stroke", function(d, i){ return lcol2[i];});
-    //Create text next to squares
-    legend.selectAll('text')
-      .data(LegendOptions)
-      .enter()
-      .append("text")
-      .attr("x", w - 50)
-      .attr("y", function(d, i){ return i * 20 + 9;})
-      .attr("font-size", "11px")
-      .attr("fill", "#737373")
-      .text(function(d) { return d; }); 
+function randomid()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for( var i=0; i < 10; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
 }
