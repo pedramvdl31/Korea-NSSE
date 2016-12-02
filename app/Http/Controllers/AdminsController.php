@@ -180,13 +180,12 @@ class AdminsController extends Controller
 
             $files = glob(public_path().'/assets/output/words/*.doc');
             $charts = glob(public_path().'/assets/output/words/charts/*');
-            Zipper::make($zipfilename)->add($files)->folder('charts')->add($charts);
 
             if (Zipper::make($zipfilename)->add($files)->folder('charts')->add($charts)) {
-            return Response::json(array(
-                'status' => 9,
-                'file_path' =>$download_path
-            ));
+                return Response::json(array(
+                    'status' => 9,
+                    'file_path' =>$download_path
+                ));
             }
 
         }
