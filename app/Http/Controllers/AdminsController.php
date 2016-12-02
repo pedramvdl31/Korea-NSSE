@@ -36,6 +36,7 @@ use PDF;
 use CloudConvert;
 use Filesystem;
 use Image;
+use Zipper;
 
 use Illuminate\Support\Facades\Storage;
 
@@ -127,13 +128,67 @@ class AdminsController extends Controller
             Job::DelEveryFile(public_path().'/assets/output/images/*');
         }
         if (isset($data)) {
-            $newstyle= '<style type="text/css">
-#picturediv{width:900px;height:500px;position:relative;float:left;overflow:hidden}.curchart{width:950px;height:400px;float:left;position:relative;width:100%}.grid .tick{stroke:#d3d3d3;opacity:.7;shape-rendering:crispEdges}.grid path{stroke-width:0}.axis path{fill:none;stroke:#bbb;shape-rendering:crispEdges}.axis path,.axis line{fill:none;stroke:#000;shape-rendering:crispEdges}g{background:transparent!important;background-color:transparent!important}.x.axis path{display:none}.lineCPI{fill:none;stroke:#858abe;stroke-width:2px}.lineRPIJ{fill:none;stroke:#D8565F;stroke-width:2px}.grid .tick{stroke:#d3d3d3;stroke-opacity:.7;stroke-dasharray:("3,3");shape-rendering:crispEdges}.grid path{stroke-width:0}.axis text{fill:#555}.axis line{stroke:#e7e7e7;shape-rendering:crispEdges}.axis .axis-label{font-size:14px}.line{fill:none;stroke-width:1.5px}.dot{stroke:transparent;stroke-width:10px;cursor:pointer}.dot:hover{stroke:rgba(68,127,255,0.3)}.c3-chart-lines .c3-target-data2{stroke-dasharray:3,3}.cs{width:590px;float:left;top:-15px;left:-61px}.textt2{position:relative;float:left;width:80%}#containermy{height:300px;width:100%;position:relative}.relat{position:relative!important}#chartwrapper{position:absolute;left:70px}.c3 line{fill:none;stroke:gray!important}path.domain{stroke:gray!important;stroke-width:1px!important}.mytable tr:first-child td:nth-child(1),.mytable tr:first-child td:nth-child(2){border:1px transparent}.mytable th,.frth{width:100px!important;max-width:100px!important;min-width:100px!important;font-weight:900}.mytable th,td{font-size:15px;border:1px solid gray;border-collapse:collapse;padding:5px;text-align:center;min-width:53.018px!important}#hr0{position:relative;margin:0;padding:0;border:solid 1px}#hr1{margin:0;padding:0;border:dashed 1px}table{background-color:transparent;border-spacing:0;border-collapse:collapse}.mytable{width:481.81px!important}.hrt2{position:relative;float:left;width:20%;padding-top:10px}.lsymb{font-size:30px;position:absolute;left:6px;top:-10px}.lsymbd{font-size:17px;left:4px;top:0}</style> ';
-
+                        $newstyle= '<style type="text/css">
+#picturediv{width:900px;height:500px;position:relative;float:left;overflow:hidden}.curchart{width:950px;height:400px;float:left;position:relative;width:100%}.grid .tick{stroke:#d3d3d3;opacity:.7;shape-rendering:crispEdges}.grid path{stroke-width:0}.axis path{fill:none;stroke:#bbb;shape-rendering:crispEdges}.axis path,.axis line{fill:none;stroke:#000;shape-rendering:crispEdges}g{background:transparent!important;background-color:transparent!important}.x.axis path{display:none}.lineCPI{fill:none;stroke:#858abe;stroke-width:2px}.lineRPIJ{fill:none;stroke:#D8565F;stroke-width:2px}.grid .tick{stroke:#d3d3d3;stroke-opacity:.7;stroke-dasharray:("3,3");shape-rendering:crispEdges}.grid path{stroke-width:0}.axis text{fill:#555}.axis line{stroke:#e7e7e7;shape-rendering:crispEdges}.axis .axis-label{font-size:14px}.line{fill:none;stroke-width:1.5px}.dot{stroke:transparent;stroke-width:10px;cursor:pointer}.dot:hover{stroke:rgba(68,127,255,0.3)}.c3-chart-lines .c3-target-data2{stroke-dasharray:3,3}.cs{width:590px;float:left;top:-15px;left:-61px}.textt2{position:relative;float:left;width:80%}#containermy{height:300px;width:100%;position:relative}.relat{position:relative!important}#chartwrapper{position:absolute;left:70px}.c3 line{fill:none;stroke:gray!important}path.domain{stroke:gray!important;stroke-width:1px!important}.mytable tr:first-child td:nth-child(1),.mytable tr:first-child td:nth-child(2){border:1px transparent}.mytable th,.frth{width:100px!important;max-width:100px!important;min-width:100px!important;font-weight:900}.mytable th,td{font-size:15px;border:1px solid gray;border-collapse:collapse;padding:5px;text-align:center;min-width:53.018px!important}#hr0{position:relative;margin:0;padding:0;border:solid 1px}#hr1{margin:0;padding:0;border:dashed 1px}table{background-color:transparent;border-spacing:0;border-collapse:collapse}.mytable{width:481.81px!important}.hrt2{position:relative;float:left;width:20%;padding-top:10px}.lsymb{font-size:30px;position:absolute;left:6px;top:-10px}.lsymbd{font-size:17px;left:4px;top:0}  </style> ';
             $AppandedData = $newstyle.$data;
             $status = 200;
-            $tok = Job::generateRandomNumber(6).time();
+            $tok = Job::generateRandomString(15).time();
             $img = Image::loadHTML($AppandedData)->setOption('height', $h)->setOption('width', $w)->setOption('quality', 100)->save(public_path().'/assets/output/images/chart-'.$tok.'-line.jpg');
+        }
+
+        if ($pnum==9) {
+            // DELETE EVERY FILE IN FOLDER
+            Job::DelEveryFile(public_path().'/assets/output/words/*');
+            Job::DelEveryFile(public_path().'/assets/output/words/charts/*');
+            // COPY ALL IMAGES TO NEW FOLDER
+            File::copyDirectory(public_path().'/assets/output/images',public_path().'/assets/output/words/charts');
+            $manuals = [];
+            $filenames = [];
+            $filesInFolder = \File::files(public_path().'/assets/output/words/charts');
+
+            foreach($filesInFolder as $path)
+            {
+                $manuals[] = pathinfo($path);
+            }
+            foreach ($manuals as $key => $value) {
+                array_push($filenames,$value['basename']);
+            }
+
+            $image_html = '';
+            foreach ($filenames as $key => $value) {
+                $image_html.=' <img style="width:100px !important" src="charts/'.$value.'"> ';
+            }
+
+            $content = '<html>
+                        <head>
+                        <meta charset="utf-8">
+                        </head>
+                        <body>
+                            <p>
+                                My Content
+                            </p>'
+                        .$image_html.
+                        '</body>
+                        </html>';
+            // Filesystem::put('file.doc', $content);
+            $tok2 = Job::generateRandomNumber(6).time();
+            $file_path = public_path().'/assets/output/words/file'.$tok2.'.doc';
+            file_put_contents($file_path,$content);
+
+            $zipfilename = public_path().'/assets/output/words/output_'.$tok2.'.zip';
+            $download_path = '/assets/output/words/output_'.$tok2.'.zip';
+
+            $files = glob(public_path().'/assets/output/words/*.doc');
+            $charts = glob(public_path().'/assets/output/words/charts/*');
+            Zipper::make($zipfilename)->add($files)->folder('charts')->add($charts);
+
+            if (Zipper::make($zipfilename)->add($files)->folder('charts')->add($charts)) {
+            return Response::json(array(
+                'status' => 9,
+                'file_path' =>$download_path
+            ));
+            }
+
         }
         return Response::json(array(
             'status' => $status

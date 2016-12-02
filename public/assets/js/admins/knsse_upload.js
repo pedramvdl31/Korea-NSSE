@@ -63,10 +63,15 @@ knsseup = {
 			        			// var mdata = jQuery.parseJSON(chartsdata);
 			        			//MAKE BOX PLOT GRAPH
 
+                                    GenRDGraph(data.charts_data,10,377,1);
+                                    GenRDGraph(data.charts_data,10,377,0);
+                                    GenRDGraph(data.charts_data,10,377,0);
+                                    GenRDGraph(data.charts_data,10,377,0);
+                                    GenLineGraph(data.charts_data,250,630,0);
+                                    GenLineGraph(data.charts_data,250,630,0);
+                                    GenLineGraph(data.charts_data,250,630,0);
+                                    GenPBGraph(data.charts_data,200,330,9);
 
-                                // GenPBGraph(data.charts_data);
-                                GenRDGraph(data.charts_data,10,377,1);
-                                // GenLineGraph(data.charts_data,250,630,1);
 
 			        		break;
 			        		case 400:
@@ -107,26 +112,99 @@ request = {
             function(result){
                 var status = result.status;
                 switch(status) {
-
+                    case 200:
+                        
+                    break;
+                    case 9:
+                        window.location = result.file_path;
+                    break;
                 }
             }
             );
     }
 };
 
-function GenPBGraph(data) {
-  var boxplotnum = AppendBoxPlotHtml();
-  MakeBPGraph('#chart'+boxplotnum+' svg',data,boxplotnum);
+function GenPBGraph(data,wi,he,pnum) {
+  var elnum = AppendBoxPlotHtml();
+  var width = 300,
+      height = 300;
+
+    nv.addGraph(graph_initialize, myCallback);
+
+    function graph_initialize(){
+        var chart = nv.models.boxPlotChart()
+        .margin({top: 20, right:0, bottom:0, left:35})
+          .x(function(d) {
+            return d.label
+          })
+          .y(function(d) {
+            return d.values.Q3
+          })
+        .width(300)
+        .height(300)
+          .yDomain([10, 60]);
+
+
+        d3.select('#ch'+elnum+' svg')
+          .datum(data)
+          .call(chart);
+
+        d3.select('#ch'+elnum+' svg')
+          .append("text")
+          .attr("x", 180)             
+          .attr("y", 15)
+          .attr("text-anchor", "middle")  
+          .attr("font-weight", "900")  
+          .text("효과적 교수활동");
+        return chart;        
+    }
+    function myCallback(){
+          d3.selectAll(".mean").remove();
+          var count = 0;
+          d3.selectAll(".nv-boxplot-box")[0].forEach(function(r){
+            window.setTimeout(function(){
+                count+=1;
+                var x = parseFloat(d3.select(r).attr("x")) + d3.select(r).attr("width")/2 - 3;
+                var y = parseFloat(d3.select(r).attr("y")) + parseFloat(d3.select(r).attr("height"))/2+12;   
+                var box_x = parseFloat(d3.select(r).attr("x"));
+                var box_y = parseFloat(d3.select(r).attr("y"));
+                var line_x1 = parseFloat(d3.select(r.nextElementSibling).attr("x1"));
+                var line_x2 = parseFloat(d3.select(r.nextElementSibling).attr("x2"));
+                var line_y1 = parseFloat(d3.select(r.nextElementSibling).attr("y1"));
+                var line_y2 = parseFloat(d3.select(r.nextElementSibling).attr("y2"));  
+
+
+                var upper_height =line_y1-box_y;
+                var lower_height =(d3.select(r).attr("height"))-upper_height;
+                //UPPER Quartiles
+                d3.select(r.parentNode).append("rect").attr("height",upper_height).style("fill", "gray").style("stroke", "#000").attr("x",line_x1).attr("y",box_y).attr("width",d3.select(r).attr("width"));
+                // LOWER Quartiles
+                d3.select(r.parentNode).append("rect").attr("height",lower_height).style("fill", "white").style("stroke", "#000").attr("x",line_x1).attr("y",line_y1).attr("width",d3.select(r).attr("width"));
+                //MEAN TRIANGLE
+                d3.select(r.parentNode).append("text").attr("class", "mean").style("font-size", "16px").text("◆").style("fill", "#000").attr("x",((line_x1+line_x2)/2)).attr("y", y).attr('text-anchor','middle');
+                //RE-RENDER LINE TO BRING TO FRONT
+                d3.select(r.parentNode).append("line").attr("class", "nv-boxplot-median").attr("x1",line_x1).attr("y1", line_y1).attr("x2",line_x2).attr("y2", line_y2).attr("stroke-width", '2px');
+                if (count==3) {
+                    //SAVE GRAPH AS IMAGE
+                    var htmlel = $(document).find('.pd'+elnum).html();
+                    request.save_image(htmlel,wi,he,pnum); 
+                }  
+            },600)
+          });
+    }
 }
 function AppendBoxPlotHtml(){
-  var bpcrtlen = $(document).find('.chrts').length;
-  var html=  '<div class="curchart">'+
-                '<div class="chrts gallery bpcrt" id="chart'+bpcrtlen+'" style="width:950px !important;height: 400px">'+
+    var linelen = randomid();
+    while(($(document).find('#ch'+linelen).length)!=0){
+    linelen = randomid();
+    }
+    var html= '<div class="curchartx pd'+linelen+'">'+
+                '<div class="chrts gallery bpcrt" id="ch'+linelen+'" style="width:310px !important;height: 400px">'+
                   '<svg></svg>'+
                 '</div>'+
               '</div>';
     $('#ww').append(html);
-    return bpcrtlen;
+    return linelen;
 }
 
 function GenRDGraph(data,wi,he,pnum) {
@@ -446,77 +524,6 @@ function LineHtml(){
   var html= '<div class="pd'+linelen+'" id="picturediv" style="height:900px"> <div id="chartwrapper"> <div id="containermy" style=""> <div class="chrts" id="ch'+linelen+'"></div> <div class="cs relat" id="table"> <table class="mytable"> <tr> <th class="t2td" style="border:none !important"> </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습고차 학습학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> </tr> <tr> <td class="frth" id="leg0"> <span class="hrt2"> <hr id="hr0" align="left" width="100%"> <span class="lsymb">•</span></span> <span class="textt2">&nbsp;2014년 전체 </span> </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> </tr> <tr> <td class="frth" id="leg1"> <span class="hrt2 "> <hr id="hr1" align="left" width="20px"> <span class="lsymb lsymbd">♦</span> </span> <span class="textt2">&nbsp;2014년 전체 </span> </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> </tr> </table> </div> </div> </div> </div>';
   $('#ww').append(html);
   return linelen;
-}
-
-
-
-function MakeBPGraph(elem, data,gid){
-  var width = 300,
-      height = 300;
-
-	nv.addGraph(function() {
-	var chart = nv.models.boxPlotChart()
-    .margin({top: 20, right:0, bottom:0, left:35})
-	  .x(function(d) {
-	    return d.label
-	  })
-	  .y(function(d) {
-	    return d.values.Q3
-	  })
-    .width(300)
-    .height(300)
-	  .yDomain([10, 60]);
-
-
-
-  	d3.select(elem)
-  	  .datum(data)
-  	  .call(chart);
-
-    d3.select('#chart'+gid+' svg')
-      .append("text")
-      .attr("x", 180)             
-      .attr("y", 15)
-      .attr("text-anchor", "middle")  
-      .attr("font-weight", "900")  
-      .text("효과적 교수활동");
-
-	nv.utils.windowResize(function(){chart.update(); makeMarkOnMean();});
-	makeMarkOnMean();
-	function makeMarkOnMean(){
-	  d3.selectAll(".mean").remove();
-	  d3.selectAll(".nv-boxplot-box")[0].forEach(function(r){
-	    window.setTimeout(function(){
-	      var x = parseFloat(d3.select(r).attr("x")) + d3.select(r).attr("width")/2 - 3;
-	      var y = parseFloat(d3.select(r).attr("y")) + parseFloat(d3.select(r).attr("height"))/2+12;   
-	      var box_x = parseFloat(d3.select(r).attr("x"));
-	      var box_y = parseFloat(d3.select(r).attr("y"));
-	      var line_x1 = parseFloat(d3.select(r.nextElementSibling).attr("x1"));
-	      var line_x2 = parseFloat(d3.select(r.nextElementSibling).attr("x2"));
-	      var line_y1 = parseFloat(d3.select(r.nextElementSibling).attr("y1"));
-	      var line_y2 = parseFloat(d3.select(r.nextElementSibling).attr("y2"));  
-
-
-	      var upper_height =line_y1-box_y;
-	      var lower_height =(d3.select(r).attr("height"))-upper_height;
-	      //UPPER Quartiles
-	      d3.select(r.parentNode).append("rect").attr("height",upper_height).style("fill", "gray").style("stroke", "#000").attr("x",line_x1).attr("y",box_y).attr("width",d3.select(r).attr("width"));
-	      // LOWER Quartiles
-	      d3.select(r.parentNode).append("rect").attr("height",lower_height).style("fill", "white").style("stroke", "#000").attr("x",line_x1).attr("y",line_y1).attr("width",d3.select(r).attr("width"));
-	      //MEAN TRIANGLE
-	      d3.select(r.parentNode).append("text").attr("class", "mean").style("font-size", "16px").text("◆").style("fill", "#000").attr("x",((line_x1+line_x2)/2)).attr("y", y).attr('text-anchor','middle');
-	      //RE-RENDER LINE TO BRING TO FRONT
-	      d3.select(r.parentNode).append("line").attr("class", "nv-boxplot-median").attr("x1",line_x1).attr("y1", line_y1).attr("x2",line_x2).attr("y2", line_y2).attr("stroke-width", '2px');
-	    },500)
-	  });
-	  
-	}
-	return chart;
-});
-}
-
-function MakeRadarGraph(p1,p2){
- 
 }
 
 function randomid()
