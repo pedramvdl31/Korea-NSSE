@@ -125,7 +125,7 @@ class AdminsController extends Controller
         $h=Input::get('height');
         if ($pnum==1) {
             // DELETE EVERY FILE IN FOLDER
-            // Job::DelEveryFile(public_path().'/assets/output/images/*');
+            Job::DelEveryFile(public_path().'/assets/output/images/*');
         }
         if (isset($data)) {
                         $newstyle= '<style type="text/css">
