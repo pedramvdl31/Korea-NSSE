@@ -224,8 +224,8 @@ class AdminsController extends Controller
     public function postKNSSEFileUpload() {
 
 
-        $saved_file = Job::TmpFileSave($_FILES,public_path("assets/excel/tmp/"),'777');
-        if ($saved_file['status']==200) {
+        // $saved_file = Job::TmpFileSave($_FILES,public_path("assets/excel/tmp/"),'777');
+        if (true) {
             
             $full_path = $saved_file['ffpath'];
             // Excel::load($full_path, function($reader) {
