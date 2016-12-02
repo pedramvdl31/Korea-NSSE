@@ -133,7 +133,7 @@ class AdminsController extends Controller
             $AppandedData = $newstyle.$data;
             $status = 200;
             $tok = Job::generateRandomString(15).time();
-            $img = Image::loadHTML($AppandedData)->setOption('height', $h)->setOption('width', $w)->setOption('quality', 100)->save(public_path().'/assets/output/images/chart-'.$tok.'-line.jpg');
+            $img = Image::loadHTML($AppandedData)->setOption('height', $h)->setOption('width', $w)->setOption('quality', 100)->save('/assets/output/images/chart-'.$tok.'-line.jpg');
         }
 
         if ($pnum==9) {
