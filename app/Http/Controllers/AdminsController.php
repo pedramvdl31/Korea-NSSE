@@ -228,12 +228,12 @@ class AdminsController extends Controller
         if ($saved_file['status']==200) {
             
             $full_path = $saved_file['ffpath'];
-            Excel::load($full_path, function($reader) {
-                // Getting all results
-                $results = $reader->get();
-                // ->all() is a wrapper for ->get() and will work the same
-                $results = $reader->all();
-            });
+            // Excel::load($full_path, function($reader) {
+            //     // Getting all results
+            //     $results = $reader->get();
+            //     // ->all() is a wrapper for ->get() and will work the same
+            //     $results = $reader->all();
+            // });
 
             $charts_data = array(   0 => array( 'label' =>'전국',
                                             'values'=> array(
