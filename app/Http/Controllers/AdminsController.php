@@ -227,7 +227,7 @@ class AdminsController extends Controller
         // $saved_file = Job::TmpFileSave($_FILES,public_path("assets/excel/tmp/"),'777');
         if (true) {
             
-            $full_path = $saved_file['ffpath'];
+            // $full_path = $saved_file['ffpath'];
             // Excel::load($full_path, function($reader) {
             //     // Getting all results
             //     $results = $reader->get();
