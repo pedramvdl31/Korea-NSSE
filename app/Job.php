@@ -74,7 +74,7 @@ class Job extends Model
 		(!is_dir($dr))?mkdir($dr,0777):null;
 	}
 	static public function MakeDirAllPerm($dr){
-		mkdir($dr,0777);
+		mkdir($dr,0755);
 		return 1;
 	}
 
