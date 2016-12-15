@@ -145,7 +145,26 @@ knsseup = {
                 var status = result.status;
                 switch(status) {
                     case 200:
-                        alert();
+                        knsseup.DwnldZip();
+                    break;
+                    case 400:
+                    break;
+                }
+            }
+        );
+    },
+    DwnldZip: function(){
+        var token = $('meta[name=csrf-token]').attr('content');
+        $.post(
+            '/dwnldzip',
+            {
+                "_token": token
+            },
+            function(result){
+                var status = result.status;
+                switch(status) {
+                    case 200:
+                        window.location = result.file_path;
                     break;
                     case 400:
                     break;

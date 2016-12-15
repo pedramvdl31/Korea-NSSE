@@ -22,6 +22,7 @@ Route::post('/save-as-image',  ['uses' => 'AdminsController@postConvertToImage']
 Route::post('/crtunifldrs',  ['uses' => 'AdminsController@postCrtUniFldrs']);
 Route::post('/makedocs',  ['uses' => 'AdminsController@postMakeDocs']);
 Route::post('/rnamunitokrn',  ['uses' => 'AdminsController@postRnmToKrean']);
+Route::post('/dwnldzip',  ['uses' => 'AdminsController@postDwnldZip']);
 
 
 

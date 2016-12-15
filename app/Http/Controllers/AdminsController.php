@@ -351,12 +351,34 @@ class AdminsController extends Controller
 
         if (isset($uname)&&is_array($uname)) {
             foreach ($uname as $k => $v) {
-                // Job::rcopy($base.$k , $base.$v );
                 // Move a file to a new location
                 File::move($base.$k, $base.$v);
             }
             $status=200;
         }
+        return Response::json(array(
+            'status' => $status
+        ));
+    }
+    public function postDwnldZip() {
+        $status=400;
+        $t = Job::generateRandomNumber(6).time();
+        $base = public_path().'/assets/words/';
+        $zipfilename = public_path().'/assets/words/output_'.$t.'.zip';
+        $download_path = '/assets/words/output_'.$t.'.zip';
+
+        $files = glob(public_path().'/assets/output/*');
+        Job::dump($files);
+
+        if (File::cleanDirectory($base)) {
+            if (Zipper::make($zipfilename)->add($files)) {
+                return Response::json(array(
+                    'status' => 200,
+                    'file_path' =>$download_path
+                ));
+            }
+        }
+
         return Response::json(array(
             'status' => $status
         ));
