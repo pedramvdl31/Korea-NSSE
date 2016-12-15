@@ -58,21 +58,11 @@ knsseup = {
 			        {
 			        	var status = data.status;
 			        	$('#loading-icons-1').fadeOut();
+
 			        	switch (status){
 			        		case 200:
-			        			// var mdata = jQuery.parseJSON(chartsdata);
-			        			//MAKE BOX PLOT GRAPH
-
-                                    GenRDGraph(data.charts_data,10,377,1);
-                                    GenRDGraph(data.charts_data,10,377,0);
-                                    GenRDGraph(data.charts_data,10,377,0);
-                                    GenRDGraph(data.charts_data,10,377,0);
-                                    GenLineGraph(data.charts_data,250,630,0);
-                                    GenLineGraph(data.charts_data,250,630,0);
-                                    GenLineGraph(data.charts_data,250,630,0);
-                                    GenPBGraph(data.charts_data,200,330,9);
-
-
+                                var uninames = jQuery.parseJSON(data.uni_names);
+                                knsseup.MakeFolders(uninames);
 			        		break;
 			        		case 400:
 
@@ -85,7 +75,84 @@ knsseup = {
 			        }
 			    });
 			});
-	}
+	},
+    MakeFolders: function(this_data){
+        var token = $('meta[name=csrf-token]').attr('content');
+        $.post(
+            '/crtunifldrs',
+            {
+                "_token": token,
+                "data": this_data
+            },
+            function(result){
+                var status = result.status;
+                switch(status) {
+                    case 200:
+                        knsseup.GenerateCharts(this_data);
+                    break;
+                    case 400:
+                    break;
+                }
+            }
+            );
+    },
+    GenerateCharts: function(uninames){
+        charts_data = 'data-holder';
+        $.each(uninames, function( ind, va ) {
+            GenRDGraph(charts_data,10,377,1,ind);
+            GenRDGraph(charts_data,10,377,0,ind);
+            GenRDGraph(charts_data,10,377,0,ind);
+            GenRDGraph(charts_data,10,377,0,ind);
+            GenLineGraph(charts_data,250,630,0,ind);
+            GenLineGraph(charts_data,250,630,0,ind);
+            GenLineGraph(charts_data,250,630,0,ind);
+            GenPBGraph(charts_data,200,330,9,ind);
+        });
+
+        setTimeout(function(){ 
+            knsseup.MakeDocs(uninames);
+            }, 20000);
+    },
+    MakeDocs: function(uninms){
+        var token = $('meta[name=csrf-token]').attr('content');
+        $.post(
+            '/makedocs',
+            {
+                "_token": token,
+                "data": uninms
+            },
+            function(result){
+                var status = result.status;
+                switch(status) {
+                    case 200:
+                        knsseup.RenameFolders(uninms);
+                    break;
+                    case 400:
+                    break;
+                }
+            }
+        );
+    },
+    RenameFolders: function(uninms){
+        var token = $('meta[name=csrf-token]').attr('content');
+        $.post(
+            '/rnamunitokrn',
+            {
+                "_token": token,
+                "data": uninms
+            },
+            function(result){
+                var status = result.status;
+                switch(status) {
+                    case 200:
+                        alert();
+                    break;
+                    case 400:
+                    break;
+                }
+            }
+        );
+    }
 }
 
 
@@ -98,7 +165,7 @@ myCharts = {
 
 
 request = {
-    save_image: function(bdata,wi,he,pnum) {
+    save_image: function(bdata,wi,he,pnum,uname) {
         var token = $('meta[name=csrf-token]').attr('content');
         $.post(
             '/save-as-image',
@@ -107,7 +174,8 @@ request = {
                 "hdata": bdata,
                 "pnum":pnum,
                 "width":wi,
-                "height":he
+                "height":he,
+                "uname":uname
             },
             function(result){
                 var status = result.status;
@@ -124,7 +192,7 @@ request = {
     }
 };
 
-function GenPBGraph(data,wi,he,pnum) {
+function GenPBGraph(data,wi,he,pnum,uname) {
   var elnum = AppendBoxPlotHtml();
   var width = 300,
       height = 300;
@@ -187,7 +255,7 @@ function GenPBGraph(data,wi,he,pnum) {
                 if (count==3) {
                     //SAVE GRAPH AS IMAGE
                     var htmlel = $(document).find('.pd'+elnum).html();
-                    request.save_image(htmlel,wi,he,pnum); 
+                    request.save_image(htmlel,wi,he,pnum,uname); 
                 }  
             },600)
           });
@@ -207,7 +275,7 @@ function AppendBoxPlotHtml(){
     return linelen;
 }
 
-function GenRDGraph(data,wi,he,pnum) {
+function GenRDGraph(data,wi,he,pnum,uname) {
     var elnum = getRDBaseHtml();
     var p1 = '#ch'+elnum;
     var p2 = '#sc'+elnum;
@@ -339,7 +407,7 @@ function GenRDGraph(data,wi,he,pnum) {
 
     //SAVE GRAPH AS IMAGE
     var htmlel = $(document).find('.pd'+elnum).html();
-    request.save_image(htmlel,wi,he,pnum);
+    request.save_image(htmlel,wi,he,pnum,uname);
 }
 
 function getRDBaseHtml(){
@@ -363,7 +431,7 @@ function getRDBaseHtml(){
     return linelen;
 }
 
-function GenLineGraph(el,wi,he,pnum) {
+function GenLineGraph(el,wi,he,pnum,uname) {
     var elnum = LineHtml();
     var color = function(i) {
         var colors = ["#0a2469", "#49abe5",
@@ -514,7 +582,7 @@ function GenLineGraph(el,wi,he,pnum) {
 
     //SAVE GRAPH AS IMAGE
     var htmlel = $(document).find('.pd'+elnum).html();
-    request.save_image(htmlel,wi,he,pnum);
+    request.save_image(htmlel,wi,he,pnum,uname);
 }
 function LineHtml(){
   var linelen = randomid();

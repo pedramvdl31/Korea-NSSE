@@ -19,6 +19,10 @@ Route::group(['prefix' => 'api/v1', 'middleware' => 'auth:api'], function () {
 
 Route::get('/charts',['uses' => 'AdminsController@getKnsseCharts']);
 Route::post('/save-as-image',  ['uses' => 'AdminsController@postConvertToImage']);
+Route::post('/crtunifldrs',  ['uses' => 'AdminsController@postCrtUniFldrs']);
+Route::post('/makedocs',  ['uses' => 'AdminsController@postMakeDocs']);
+Route::post('/rnamunitokrn',  ['uses' => 'AdminsController@postRnmToKrean']);
+
 
 
 

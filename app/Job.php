@@ -73,6 +73,11 @@ class Job extends Model
 	static public function CheckNMakeDirAllPerm($dr){
 		(!is_dir($dr))?mkdir($dr,0777):null;
 	}
+	static public function MakeDirAllPerm($dr){
+		mkdir($dr,0777);
+		return 1;
+	}
+
 	static public function ReturnRandDateNTok(){
 		$output=['now_dt'=>date("d_m_Y"),'tok'=>Job::generateRandomNumber(6)];
 		return $output;
