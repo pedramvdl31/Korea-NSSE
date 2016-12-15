@@ -368,7 +368,7 @@ class AdminsController extends Controller
         $download_path = '/assets/words/output_'.$t.'.zip';
 
         $files = glob(public_path().'/assets/output/*');
-        Job::dump($files);
+        // Job::dump($files);
 
         if (File::cleanDirectory($base)) {
             if (Zipper::make($zipfilename)->add($files)) {
