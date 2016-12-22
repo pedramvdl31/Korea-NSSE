@@ -62,7 +62,8 @@ knsseup = {
 			        	switch (status){
 			        		case 200:
                                 var uninames = jQuery.parseJSON(data.uni_names);
-                                knsseup.MakeFolders(uninames);
+                                var cdata = data.charts_data;
+                                knsseup.MakeFolders(uninames,cdata);
 			        		break;
 			        		case 400:
 
@@ -76,7 +77,7 @@ knsseup = {
 			    });
 			});
 	},
-    MakeFolders: function(this_data){
+    MakeFolders: function(this_data,cdata){
         var token = $('meta[name=csrf-token]').attr('content');
         $.post(
             '/crtunifldrs',
@@ -88,7 +89,7 @@ knsseup = {
                 var status = result.status;
                 switch(status) {
                     case 200:
-                        knsseup.GenerateCharts(this_data);
+                        knsseup.GenerateCharts(this_data,cdata);
                     break;
                     case 400:
                     break;
@@ -96,8 +97,11 @@ knsseup = {
             }
             );
     },
-    GenerateCharts: function(uninames){
-        charts_data = 'data-holder';
+    GenerateCharts: function(uninames,cdata){
+        charts_data = cdata;
+        var unis = uninames.length;
+        var numcharts = 9;
+        window.exe_flag = unis * numcharts;
         $.each(uninames, function( ind, va ) {
             GenRDGraph(charts_data,10,377,1,ind);
             GenRDGraph(charts_data,10,377,0,ind);
@@ -106,12 +110,13 @@ knsseup = {
             GenLineGraph(charts_data,250,630,0,ind);
             GenLineGraph(charts_data,250,630,0,ind);
             GenLineGraph(charts_data,250,630,0,ind);
+            // GenPBGraph(charts_data,200,330,0,ind);
             GenPBGraph(charts_data,200,330,9,ind);
         });
 
         setTimeout(function(){ 
             knsseup.MakeDocs(uninames);
-            }, 20000);
+        }, 20000);
     },
     MakeDocs: function(uninms){
         var token = $('meta[name=csrf-token]').attr('content');
@@ -185,6 +190,10 @@ myCharts = {
 
 request = {
     save_image: function(bdata,wi,he,pnum,uname) {
+        exe_flag 
+        console.log('current val is: '+exe_flag);
+        exe_flag = exe_flag - 1;
+        console.log('new val is: '+exe_flag);
         var token = $('meta[name=csrf-token]').attr('content');
         $.post(
             '/save-as-image',
@@ -248,7 +257,7 @@ function GenPBGraph(data,wi,he,pnum,uname) {
     function myCallback(){
           d3.selectAll(".mean").remove();
           var count = 0;
-          d3.selectAll(".nv-boxplot-box")[0].forEach(function(r){
+          d3.selectAll("#ch"+elnum+" svg .nv-boxplot-box")[0].forEach(function(r){
             window.setTimeout(function(){
                 count+=1;
                 var x = parseFloat(d3.select(r).attr("x")) + d3.select(r).attr("width")/2 - 3;
@@ -285,7 +294,7 @@ function AppendBoxPlotHtml(){
     while(($(document).find('#ch'+linelen).length)!=0){
     linelen = randomid();
     }
-    var html= '<div class="curchartx pd'+linelen+'">'+
+    var html= '<div class="curchartx pd'+linelen+' picturediv">'+
                 '<div class="chrts gallery bpcrt" id="ch'+linelen+'" style="width:310px !important;height: 400px">'+
                   '<svg></svg>'+
                 '</div>'+
@@ -441,7 +450,7 @@ function getRDBaseHtml(){
           'svg {display:block;}'+
           'svg {margin:0px;padding:0px;height:100% !important;width: 100% !important;}'+
           '</style>'+
-          '<div class="curchart pd'+linelen+'" id="sc'+linelen+'">'+
+          '<div class="curchart pd'+linelen+' picturediv" id="sc'+linelen+'">'+
             '<div class="chrts rdcrt" id="ch'+linelen+'" style="width:450px !important;height: 400px;float:left;">'+
               '<svg></svg>'+
             '</div>'+
@@ -608,7 +617,7 @@ function LineHtml(){
   while(($(document).find('#ch'+linelen).length)!=0){
     linelen = randomid();
   }
-  var html= '<div class="pd'+linelen+'" id="picturediv" style="height:900px"> <div id="chartwrapper"> <div id="containermy" style=""> <div class="chrts" id="ch'+linelen+'"></div> <div class="cs relat" id="table"> <table class="mytable"> <tr> <th class="t2td" style="border:none !important"> </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습고차 학습학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> </tr> <tr> <td class="frth" id="leg0"> <span class="hrt2"> <hr id="hr0" align="left" width="100%"> <span class="lsymb">•</span></span> <span class="textt2">&nbsp;2014년 전체 </span> </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> </tr> <tr> <td class="frth" id="leg1"> <span class="hrt2 "> <hr id="hr1" align="left" width="20px"> <span class="lsymb lsymbd">♦</span> </span> <span class="textt2">&nbsp;2014년 전체 </span> </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> </tr> </table> </div> </div> </div> </div>';
+  var html= '<div class="pd'+linelen+' picturediv" style="height:900px"> <div id="chartwrapper"> <div id="containermy" style=""> <div class="chrts" id="ch'+linelen+'"></div> <div class="cs relat" id="table"> <table class="mytable"> <tr> <th class="t2td" style="border:none !important"> </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습고차 학습학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> <th>고차원 학습 </th> </tr> <tr> <td class="frth" id="leg0"> <span class="hrt2"> <hr id="hr0" align="left" width="100%"> <span class="lsymb">•</span></span> <span class="textt2">&nbsp;2014년 전체 </span> </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> </tr> <tr> <td class="frth" id="leg1"> <span class="hrt2 "> <hr id="hr1" align="left" width="20px"> <span class="lsymb lsymbd">♦</span> </span> <span class="textt2">&nbsp;2014년 전체 </span> </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> <td>45.3 </td> </tr> </table> </div> </div> </div> </div>';
   $('#ww').append(html);
   return linelen;
 }

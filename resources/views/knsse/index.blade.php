@@ -65,11 +65,11 @@
 
   <div class="panel panel-default" style="margin: 15px 15px 0 15px;">
     <div class="panel-body" style="overflow: auto">
-      <div id="ww">
+      <div id="ww" style="overflow: scroll;">
 
 
         <style type="text/css">
-          #picturediv{
+          #picturediv,.picturediv{
           width: 900px;
           height: 500px;
           position: relative;

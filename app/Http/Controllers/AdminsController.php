@@ -38,6 +38,8 @@ use Filesystem;
 use Image;
 use Zipper;
 
+use ZipArchive;
+
 use Illuminate\Support\Facades\Storage;
 
 
@@ -334,7 +336,7 @@ class AdminsController extends Controller
                 }
                 // Saving the document as OOXML file...
                 $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
-                $objWriter->save($base.$k.'/helloWorld.docx');
+                $objWriter->save($base.$k.'/Report.docx');
             }
 
 
@@ -363,15 +365,16 @@ class AdminsController extends Controller
     public function postDwnldZip() {
         $status=400;
         $t = Job::generateRandomNumber(6).time();
-        $base = public_path().'/assets/words/';
-        $zipfilename = public_path().'/assets/words/output_'.$t.'.zip';
-        $download_path = '/assets/words/output_'.$t.'.zip';
+        $fn = 'output_'.$t.'.zip';
+        $savepath = public_path().'/assets/zip/';
+        $savepathfullpath = public_path().'/assets/zip/'.$fn;
+        $download_path = '/assets/zip/'.$fn;
 
-        $files = glob(public_path().'/assets/output/*');
-        // Job::dump($files);
+        $tobezipped = public_path().'/assets/output/';
 
-        if (File::cleanDirectory($base)) {
-            if (Zipper::make($zipfilename)->add($files)) {
+
+        if (File::cleanDirectory($savepath)) {
+            if (Job::Zip($tobezipped, $savepathfullpath)) {
                 return Response::json(array(
                     'status' => 200,
                     'file_path' =>$download_path
