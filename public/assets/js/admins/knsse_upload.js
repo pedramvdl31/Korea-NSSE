@@ -116,7 +116,7 @@ knsseup = {
 
         setTimeout(function(){ 
             knsseup.MakeDocs(uninames);
-        }, 20000);
+        }, 5000);
     },
     MakeDocs: function(uninms){
         var token = $('meta[name=csrf-token]').attr('content');
