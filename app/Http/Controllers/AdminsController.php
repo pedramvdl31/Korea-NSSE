@@ -374,7 +374,9 @@ class AdminsController extends Controller
 
 
         if (File::cleanDirectory($savepath)) {
-            if (Job::Zip($tobezipped, $savepathfullpath)) {
+            $zip = new ZipArchive(); 
+            $zip->open($savepathfullpath, ZipArchive::CREATE);
+            if (Job::addFolderToZip($tobezipped, $zip)) {
                 return Response::json(array(
                     'status' => 200,
                     'file_path' =>$download_path

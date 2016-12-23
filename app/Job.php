@@ -107,14 +107,12 @@ class Job extends Model
 
 	            if (is_dir($file) === true)
 	            {
-	            	$filename = mb_convert_encoding($file, mb_detect_order($file), "UTF-8");
-
-	                $zip->addEmptyDir(str_replace($source . '/', '', $filename . '/'));
+	                $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
 	            }
-	            // else if (is_file($file) === true)
-	            // {
-	            //     $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
-	            // }
+	            else if (is_file($file) === true)
+	            {
+	                $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
+	            }
 	        }
 	    }
 	    else if (is_file($source) === true)
@@ -123,6 +121,33 @@ class Job extends Model
 	    }
 
 	    return $zip->close();
+	}
+	
+	static public function addFolderToZip($dir, $zipArchive){
+	    if (is_dir($dir)) {
+	        if ($dh = opendir($dir)) {
+
+	            //Add the directory
+	            $zipArchive->addEmptyDir($dir);
+	            
+	            // Loop through all the files
+	            while (($file = readdir($dh)) !== false) {
+	            
+	                //If it's a folder, run the function again!
+	                if(!is_file($dir . $file)){
+	                    // Skip parent and root directories
+	                    if( ($file !== ".") && ($file !== "..")){
+	                        Job::addFolderToZip($dir . $file . "/", $zipArchive);
+	                    }
+	                    
+	                }else{
+	                    // Add the files
+	                    $zipArchive->addFile($dir . $file);
+	                    
+	                }
+	            }
+	        }
+	    }
 	}
 
 	static public function ReturnRandDateNTok(){
