@@ -122,33 +122,6 @@ class Job extends Model
 
 	    return $zip->close();
 	}
-	
-	static public function addFolderToZip($dir, $zipArchive){
-	    if (is_dir($dir)) {
-	        if ($dh = opendir($dir)) {
-
-	            //Add the directory
-	            $zipArchive->addEmptyDir($dir);
-	            
-	            // Loop through all the files
-	            while (($file = readdir($dh)) !== false) {
-	            
-	                //If it's a folder, run the function again!
-	                if(!is_file($dir . $file)){
-	                    // Skip parent and root directories
-	                    if( ($file !== ".") && ($file !== "..")){
-	                        Job::addFolderToZip($dir . $file . "/", $zipArchive);
-	                    }
-	                    
-	                }else{
-	                    // Add the files
-	                    $zipArchive->addFile($dir . $file);
-	                    
-	                }
-	            }
-	        }
-	    }
-	}
 
 	static public function ReturnRandDateNTok(){
 		$output=['now_dt'=>date("d_m_Y"),'tok'=>Job::generateRandomNumber(6)];
@@ -208,6 +181,15 @@ class Job extends Model
                         foreach ($files as $file) {
                             $file = realpath($file);
                             if (is_dir($file)) {
+                            	// correct UTF-8 should hold together through this
+								if($file === mb_convert_encoding(mb_convert_encoding($file, "UTF-32", "UTF-8"), "UTF-8", "UTF-32"))
+								{
+								  $file = $file;
+								}else
+								{
+								  // otherwise we should use 
+								  $file = mb_convert_encoding($file, 'UTF-8','CP850');
+								}
                                 $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
                             } else if (is_file($file)) {
                                 $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
