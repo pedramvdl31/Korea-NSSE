@@ -108,7 +108,8 @@ class Job extends Model
 	            if (is_dir($file) === true)
 	            {
 	            	$filename = mb_convert_encoding($file, mb_detect_order($file), "UTF-8");
-	            	// Job::dump($filename);
+	            	$tett = str_replace($source . '/', '', $filename . '/');
+	            	Job::dump($tett);
 	                $zip->addEmptyDir(str_replace($source . '/', '', $filename . '/'));
 	            }
 	            else if (is_file($file) === true)
