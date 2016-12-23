@@ -111,12 +111,10 @@ class Job extends Model
 
 	                $zip->addEmptyDir(str_replace($source . '/', '', $filename . '/'));
 	            }
-	            else if (is_file($file) === true)
-	            {
-	            	$tett = str_replace($source . '/', '', $file);
-	            	Job::dump($tett);
-	                $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
-	            }
+	            // else if (is_file($file) === true)
+	            // {
+	            //     $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
+	            // }
 	        }
 	    }
 	    else if (is_file($source) === true)
