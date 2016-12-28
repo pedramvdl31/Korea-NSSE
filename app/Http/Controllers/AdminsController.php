@@ -51,7 +51,7 @@ class AdminsController extends Controller
     }
     
     public function getIndex() {
-// phpinfo();
+phpinfo();
         // $phpWord = new \PhpOffice\PhpWord\PhpWord();
         // // Begin code
         // $section = $phpWord->addSection();
@@ -285,6 +285,15 @@ class AdminsController extends Controller
             // $zipfilename = public_path().'/assets/output/words/output_'.$tok2.'.zip';
             // $download_path = '/assets/output/words/output_'.$tok2.'.zip';
 
+            // $files = glob(public_path().'/assets/output/words/*.doc');
+            // $charts = glob(public_path().'/assets/output/words/charts/*');
+
+            // if (Zipper::make($zipfilename)->add($files)->folder('charts')->add($charts)) {
+            //     return Response::json(array(
+            //         'status' => 9,
+            //         'file_path' =>$download_path
+            //     ));
+            // }
 
         }
         return Response::json(array(
@@ -327,8 +336,10 @@ class AdminsController extends Controller
                 }
                 // Saving the document as OOXML file...
                 $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
-                $objWriter->save($base.$k.'/Report틋j.docx');
+                $objWriter->save($base.$k.'/Report.docx');
             }
+
+
             $status=200;
         }
         return Response::json(array(
@@ -362,30 +373,14 @@ class AdminsController extends Controller
         $tobezipped = public_path().'/assets/output/';
 
 
-
-
-        // if (File::cleanDirectory($savepath)) {
-        //     if (Job::Zip($tobezipped, $savepathfullpath)) {
-        //         return Response::json(array(
-        //             'status' => 200,
-        //             'file_path' =>$download_path
-        //         ));
-        //     }
-        // }
-
-        //-----
-        $files = glob(public_path().'/assets/output/*');
-        // $charts = glob(public_path().'/assets/output/words/charts/*');
-
-        if (Zipper::make($savepathfullpath)->add($files)->folder('cha틋rts')) {
-            return Response::json(array(
-                'status' => 200,
-                'file_path' =>$download_path
-            ));
+        if (File::cleanDirectory($savepath)) {
+            if (Job::Zip($tobezipped, $savepathfullpath)) {
+                return Response::json(array(
+                    'status' => 200,
+                    'file_path' =>$download_path
+                ));
+            }
         }
-
-
-        //-----
 
         return Response::json(array(
             'status' => $status
