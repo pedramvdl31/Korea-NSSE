@@ -51,7 +51,7 @@ class AdminsController extends Controller
     }
     
     public function getIndex() {
-phpinfo();
+// phpinfo();
         // $phpWord = new \PhpOffice\PhpWord\PhpWord();
         // // Begin code
         // $section = $phpWord->addSection();
