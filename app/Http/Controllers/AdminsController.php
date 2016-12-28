@@ -336,7 +336,7 @@ class AdminsController extends Controller
                 }
                 // Saving the document as OOXML file...
                 $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
-                $objWriter->save($base.$k.'/Report.docx');
+                $objWriter->save($base.$k.'/Report틋j.docx');
             }
 
 

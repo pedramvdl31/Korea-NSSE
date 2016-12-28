@@ -181,15 +181,6 @@ class Job extends Model
                         foreach ($files as $file) {
                             $file = realpath($file);
                             if (is_dir($file)) {
-                            	// correct UTF-8 should hold together through this
-								if($file === mb_convert_encoding(mb_convert_encoding($file, "UTF-32", "UTF-8"), "UTF-8", "UTF-32"))
-								{
-								  $file = $file;
-								}else
-								{
-								  // otherwise we should use 
-								  $file = mb_convert_encoding($file, 'UTF-8','CP850');
-								}
                                 $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
                             } else if (is_file($file)) {
                                 $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
